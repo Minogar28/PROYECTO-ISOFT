@@ -237,7 +237,12 @@ const adminRoutes = [{
 }, {
   path: "/pages/starter",
   element: <LoadComponent component={lazy(() => import("@src/pages/other/Starter"))} />
-}, {
+}, 
+{
+  path: "/pages/inicio",
+  element: <LoadComponent component={lazy(() => import("@src/pages/inicio/Starter"))} />
+}, 
+{
   path: "/pages/profile",
   element: <LoadComponent component={lazy(() => import("@src/pages/other/Profile/"))} />
 }, {
