@@ -35,24 +35,25 @@ export default function useLogin() {
   const redirectUrl = useMemo(() => (location.state?.from.pathname, "/"), [location.state]);
   const login = handleSubmit(async values => {
     setLoading(true);
-    try {
-      const res = await HttpClient.post("/login", values);
-      if (res.data.token) {
-        saveSession({
-          ...(res.data ?? {}),
-          token: res.data.token
-        });
-        navigate(redirectUrl);
-      }
-    } catch (error) {
-      if (error.response?.data?.error) {
-        enqueueSnackbar(error.response?.data?.error, {
-          variant: "error"
-        });
-      }
-    } finally {
-      setLoading(false);
-    }
+    
+    // try {
+    //   const res = await HttpClient.post("/login", values);
+    //   if (res.data.token) {
+    //     saveSession({
+    //       ...(res.data ?? {}),
+    //       token: res.data.token
+    //     });
+    //     navigate(redirectUrl);
+    //   }
+    // } catch (error) {
+    //   if (error.response?.data?.error) {
+    //     enqueueSnackbar(error.response?.data?.error, {
+    //       variant: "error"
+    //     });
+    //   }
+    // } finally {
+    //   setLoading(false);
+    // }
   });
   return {
     loading,
