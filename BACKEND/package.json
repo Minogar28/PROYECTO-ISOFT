@@ -15,6 +15,9 @@
     "joi": "^17.13.3",
     "jsonwebtoken": "^9.0.2",
     "mongoose": "^8.8.0",
-    "newrelic": "^12.6.1"
+    "newrelic": "^12.6.1",
+    "nodemailer": "^6.9.16",
+    "request": "^2.88.2",
+    "uuid": "^11.0.2"
   }
 }

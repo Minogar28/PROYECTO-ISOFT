@@ -319,7 +319,7 @@ const repo = {
         Usuario: { $regex: findObject.Login, $options: "i" },
         Clave: findObject.Clave
       };
-
+  
       // Busca el usuario en la base de datos
       let response = await objModel.find(query, {
         _id: 1,
@@ -334,12 +334,13 @@ const repo = {
         PrimerApellido: 1,
         Celular: 1
       }).populate('IdRol');
-
-      let token = null;
-
-      if (response.length > 0) {
+      
+      console.log("respuesta--", response);
+      
+      // Verifica si `response` tiene algún valor antes de intentar acceder a sus propiedades
+      if (response && response.length > 0) {
         // Genera el token JWT si el usuario es válido
-        token = jwt.sign(
+        let token = jwt.sign(
           {
             name: findObject.Login,
             id: response[0]._id,
@@ -347,7 +348,7 @@ const repo = {
           },
           constants.TOKEN_SECRET
         );
-
+  
         return {
           status: constants.SUCCEEDED_MESSAGE,
           datos: response,
@@ -356,6 +357,7 @@ const repo = {
           failure_message: null
         };
       } else {
+        // Maneja el caso donde no se encuentra el usuario
         return {
           status: constants.FAILED_MESSAGE,
           datos: [],
@@ -372,6 +374,7 @@ const repo = {
       };
     }
   },
+  
 
   listarPorIdentificacion: async (objParameters) => {
     try {

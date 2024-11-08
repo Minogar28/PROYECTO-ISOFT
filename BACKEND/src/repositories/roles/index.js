@@ -1,6 +1,6 @@
 const constants = require('../../constants');
 const rolesModel = require('../../models/roles');
-const uuidv1 = require('../../../node_modules/uuid/v1');
+const { v1: uuidv1 } = require('uuid');
 const mongo = require('mongodb');
 const objModel = require('../../models/usuariosAdministrativos');
 

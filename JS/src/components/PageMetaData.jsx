@@ -3,7 +3,7 @@ const PageMetaData = ({
   title
 }) => {
   return <Helmet>
-      <title> {title} | Attex React - Responsive MUI Admin Dashboard </title>
+      <title> {title} | CELERIUM </title>
     </Helmet>;
 };
 export default PageMetaData;

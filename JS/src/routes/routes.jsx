@@ -297,5 +297,5 @@ const adminRoutes = [{
 export const defaultLayoutRoutes = [...otherRotes, ...authRoutes];
 export const verticalLayoutRoutes = [{
   path: "/",
-  element: <Navigate to="/ecommerce" />
+  element: <Navigate to="/pages/starter" />
 }, ...adminRoutes, ...appsRoutes, ...uiComponentRoutes];

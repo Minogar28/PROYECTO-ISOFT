@@ -49,7 +49,7 @@ const Topbar = () => {
     }}>
         <MenuToggler />
 
-        <Box sx={{
+        {/* <Box sx={{
         maxWidth: "203px",
         display: {
           xs: "none",
@@ -72,7 +72,7 @@ const Topbar = () => {
             py: "8px"
           }
         }} />
-        </Box>
+        </Box> */}
       </Box>
 
       <Box sx={{
@@ -92,9 +92,9 @@ const Topbar = () => {
           alignItems: "center",
           gap: 1.5
         }}>
-            <LanguageDropdown />
+            {/* <LanguageDropdown /> */}
             <NotificationsDropdown notifications={notifications} />
-            <AppsDropdown />
+            {/* <AppsDropdown /> */}
           </Box>
         </Box>
 

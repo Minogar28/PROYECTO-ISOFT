@@ -12,6 +12,11 @@ import { useDropdownMenu } from "@src/hooks";
 import { useLayoutContext } from "@src/states";
 import { Link } from "react-router-dom";
 const UserProfile = () => {
+
+  const info = JSON.parse(localStorage.getItem('userSession'));
+  const userData = info.userData[0];
+console.log("Info de usuario-->",userData );
+
   const selectedLanguage = country3;
   const {
     settings: {
@@ -68,11 +73,13 @@ const UserProfile = () => {
         width: 32
       }} />
         <div>
-          <Typography variant="subtitle2" color={"text.primary"}>
-            Tosha Minner
+        <Typography variant="subtitle2" color={"text.primary"}>
+        {userData.PrimerNombre && userData.PrimerApellido 
+    ? `${userData.PrimerNombre} ${userData.PrimerApellido}` 
+    : "Usuario Desconocido"}
           </Typography>
           <Typography variant="caption" color={"text.primary"}>
-            Founder & CEO
+            {userData.RolNombre || "Rol Desconocido"}
           </Typography>
         </div>
       </Box>

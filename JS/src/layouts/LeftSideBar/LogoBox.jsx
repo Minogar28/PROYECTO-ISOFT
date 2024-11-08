@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
-import logo from "@src/assets/images/logo.png";
-import logoDark from "@src/assets/images/logo-dark.png";
+import logo from "@src/assets/images/logoCelerium.png";
+import logoDark from "@src/assets/images/logoCelerium.png";
 import { useLayoutContext } from "@src/states";
 import { styled } from "@mui/system";
 const LogoBox = ({
@@ -34,7 +34,7 @@ const LogoBox = ({
       justifyContent: "center",
       display: "flex"
     }}>
-        <img src={(defaultTheme ?? theme) == "light" ? logoDark : logo} height={22} width={94} />
+        <img src={(defaultTheme ?? theme) == "light" ? logoDark : logo} height={42} width={194} />
       </Link>
     </LogoBoxWrapper>;
 };

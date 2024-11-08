@@ -27,19 +27,19 @@ const Footer = () => {
   } = useLayoutContext();
   return <FooterWrapper settings={settings} className="footer-do-not-remove">
       <Typography variant="subtitle2" color={"text.primary"}>
-        2016 - {new Date().getFullYear()} © Attex - Coderthemes
+        2024 - {new Date().getFullYear()} © Creado por Miguel A. García & Andre D. Quintana
       </Typography>
       <Stack direction={"row"} spacing={2} sx={{
       display: "flex"
     }}>
         <Typography variant="subtitle2" color={"text.primary"}>
-          About
+          Acerca de
         </Typography>
         <Typography variant="subtitle2" color={"text.primary"}>
-          Support
+          Soporte
         </Typography>
         <Typography variant="subtitle2" color={"text.primary"}>
-          Contact Us
+          Contactenos
         </Typography>
       </Stack>
     </FooterWrapper>;

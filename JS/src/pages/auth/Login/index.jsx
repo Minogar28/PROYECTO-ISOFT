@@ -6,7 +6,7 @@ import useLogin from "./useLogin";
 import AuthLayout from "../AuthLayout";
 
 /**
- * Bottom Links goes here
+ * Enlaces inferiores
  */
 const BottomLink = () => {
   return <Box sx={{
@@ -19,10 +19,10 @@ const BottomLink = () => {
       flexWrap: "nowrap",
       gap: 0.5
     }}>
-        Don&apos;t have an account?&nbsp;
+        ¿No tienes una cuenta?&nbsp;
         <Link to="/auth/register">
           <Typography variant="subtitle2" component={"span"}>
-            Register
+            Regístrate
           </Typography>
         </Link>
       </Typography>
@@ -35,22 +35,22 @@ const Login = () => {
     control
   } = useLogin();
   return <>
-      <PageMetaData title={"Login"} />
+      <PageMetaData title={"Iniciar sesión"} />
 
-      <AuthLayout authTitle="Login In" helpText="Enter your email address and password to access admin panel." bottomLinks={<BottomLink />}>
+      <AuthLayout authTitle="Iniciar sesión" helpText="Ingresa tu correo electrónico y contraseña para acceder al panel de administración." bottomLinks={<BottomLink />}>
         <form onSubmit={login}>
-          <FormInput name="email" type="email" label="Email Address" control={control} />
+          <FormInput name="email" type="email" label="Correo electrónico" control={control} />
 
           <Box sx={{
           mt: 2
         }}>
-            <PasswordInput name="password" type="password" label={"Password"} control={control} />
+            <PasswordInput name="password" type="password" label={"Contraseña"} control={control} />
           </Box>
 
           <Box sx={{
           mt: 1
         }}>
-            <CheckboxInput name="rememberMe" label="Remember me" control={control} />
+            <CheckboxInput name="rememberMe" label="Recuérdame" control={control} />
           </Box>
 
           <Box sx={{
@@ -59,7 +59,7 @@ const Login = () => {
           mt: 2
         }}>
             <Button variant="contained" color="primary" type="submit" disabled={loading} size={"large"}>
-              Login
+              Iniciar sesión
             </Button>
           </Box>
         </form>

@@ -3,7 +3,7 @@ import { Avatar, Box, Card, CardContent, Typography } from "@mui/material";
 import { AuthBGLayout } from "@src/components";
 
 // images
-import logo from "@src/assets/images/logo.png";
+import logo from "@src/assets/images/logoCelerium.png";
 const AuthLayout = ({
   pageImage,
   authTitle,
@@ -40,7 +40,7 @@ const AuthLayout = ({
                   display: "flex",
                   justifyContent: "center"
                 }}>
-                    <img src={logo} alt="logo" height={24} />
+                    <img src={logo} alt="logo" height={64} />
                   </Link>
                 </CardContent>
                 <CardContent sx={{
@@ -85,16 +85,16 @@ const AuthLayout = ({
         left: 0,
         right: 0
       }}>
-          <Link to={"https://coderthemes.com/"} target="_blank" style={{
-          color: "unset"
-        }}>
-            <Typography variant="body2" sx={{
+        <Typography variant="body2" sx={{
             textAlign: "center",
             p: "24px"
           }} color={"text.secondary"}>
               {new Date().getFullYear()} © Attex - Coderthemes.com
             </Typography>
-          </Link>
+          {/* <Link to={"https://coderthemes.com/"} target="_blank" style={{
+          color: "unset"   }}           >
+            
+          </Link> */}
         </Box>
       </AuthBGLayout>
     </>;

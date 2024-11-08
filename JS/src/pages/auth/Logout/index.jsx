@@ -6,7 +6,7 @@ import { useAuthContext } from "@src/states";
 import { useEffect } from "react";
 
 /**
- * Bottom Links goes here
+ * Enlaces inferiores
  */
 const BottomLink = () => <Box sx={{
   my: "16px",
@@ -18,10 +18,10 @@ const BottomLink = () => <Box sx={{
     flexWrap: "nowrap",
     gap: 0.5
   }}>
-      Log back In
+      Ir a
       <Link to="/auth/login">
         <Typography variant="subtitle2" component={"span"}>
-          Log In
+          Iniciar sesión
         </Typography>
       </Link>
     </Typography>
@@ -41,9 +41,9 @@ const Logout = () => {
     removeSession();
   }, []);
   return <>
-      <PageMetaData title={"Logout"} />
+      <PageMetaData title={"Cerrar sesión"} />
 
-      <AuthLayout authTitle="See You Again !" helpText="You are now successfully logged out." bottomLinks={<BottomLink />}>
+      <AuthLayout authTitle="¡Hasta pronto!" helpText="Has cerrado sesión exitosamente." bottomLinks={<BottomLink />}>
         <Box sx={{
         width: 144,
         mx: "auto"
