@@ -153,6 +153,17 @@ const appsRoutes = [{
 }, {
   path: "/apps/chat",
   element: <LoadComponent component={lazy(() => import("@src/pages/apps/Chat"))} />
+},
+{
+  path: "/apps/micuenta",
+  element: <LoadComponent component={lazy(() => import("@src/pages/cuenta/index.jsx"))} />
+},{
+  path: "/crear/proyecto",
+  element: <LoadComponent component={lazy(() => import("@src/pages/crearProyecto"))} />
+},
+{
+  path: "/proyectos/gestion",
+  element: <LoadComponent component={lazy(() => import("@src/pages/Proyectos"))} />
 }, {
   path: "/apps/kanban",
   element: <LoadComponent component={lazy(() => import("@src/pages/apps/Kanban"))} />
@@ -235,12 +246,8 @@ const adminRoutes = [{
   path: "error-404-alt",
   element: <LoadComponent component={lazy(() => import("@src/pages/error/Error404Alt"))} />
 }, {
-  path: "/pages/starter",
-  element: <LoadComponent component={lazy(() => import("@src/pages/other/Starter"))} />
-}, 
-{
-  path: "/pages/inicio",
-  element: <LoadComponent component={lazy(() => import("@src/pages/inicio/Starter"))} />
+  path: "/inicio",
+  element: <LoadComponent component={lazy(() => import("@src/pages/inicio"))} />
 }, 
 {
   path: "/pages/profile",
@@ -297,5 +304,5 @@ const adminRoutes = [{
 export const defaultLayoutRoutes = [...otherRotes, ...authRoutes];
 export const verticalLayoutRoutes = [{
   path: "/",
-  element: <Navigate to="/pages/starter" />
+  element: <Navigate to="/inicio" />
 }, ...adminRoutes, ...appsRoutes, ...uiComponentRoutes];

@@ -19,7 +19,7 @@ const LogoBox = ({
     settings
   }) => {
     return {
-      backgroundColor: backgroundColor ? settings.sidenav.theme == "light" ? "#fff " : "#212428" : "transparent",
+      backgroundColor: backgroundColor ? settings.sidenav.theme == "light" ? "#A0FFFF " : "#212428" : "transparent",
       height: "70px",
       position: "sticky",
       top: 0,

@@ -19,7 +19,7 @@ const LeftSideBarWrapper = styled("div")(({
   settings
 }) => {
   return {
-    backgroundColor: settings.sidenav.theme == "light" ? "#fff " : "#212428",
+    backgroundColor: settings.sidenav.theme == "light" ? "#A0FFFF " : "#212428",
     width: 240,
     minWidth: 240,
     height: "100vh",

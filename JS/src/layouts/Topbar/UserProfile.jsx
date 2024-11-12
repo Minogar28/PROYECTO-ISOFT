@@ -15,7 +15,7 @@ const UserProfile = () => {
 
   const info = JSON.parse(localStorage.getItem('userSession'));
   const userData = info.userData[0];
-console.log("Info de usuario-->",userData );
+  console.log("Info de usuario-->", userData);
 
   const selectedLanguage = country3;
   const {
@@ -29,24 +29,28 @@ console.log("Info de usuario-->",userData );
     handleClick,
     handleClose
   } = useDropdownMenu();
-  const profileDropdownOptions = [{
-    icon: LuUserCircle2,
-    label: "My Account"
-  }, {
-    icon: LuSettings,
-    label: "Settings"
-  }, {
-    icon: LuHeartHandshake,
-    label: "Support"
-  }, {
-    icon: LuLock,
-    label: "Lock Screen",
-    link: "/auth/lock-screen"
-  }, {
-    icon: LuLogOut,
-    label: "Logout",
-    link: "/auth/logout"
-  }];
+  const profileDropdownOptions = [
+    {
+      icon: LuUserCircle2,
+      label: "Mi Cuenta",
+      link: "/apps/micuenta"
+    }, {
+      icon: LuSettings,
+      label: "Configuración"
+    }, 
+    // {
+    //   icon: LuHeartHandshake,
+    //   label: "Support"
+    // },
+     {
+      icon: LuLock,
+      label: "Bloquear Pantalla",
+      link: "/auth/lock-screen"
+    }, {
+      icon: LuLogOut,
+      label: "Cerrar Sesión",
+      link: "/auth/logout"
+    }];
   return <Box sx={{
     cursor: "pointer",
     gap: 1,
@@ -55,7 +59,7 @@ console.log("Info de usuario-->",userData );
     height: "100%",
     width: "auto"
   }}>
-      <Box onClick={handleClick} sx={{
+    <Box onClick={handleClick} sx={{
       paddingLeft: "8px",
       paddingRight: "8px",
       display: "flex",
@@ -68,22 +72,22 @@ console.log("Info de usuario-->",userData );
       backgroundColor: "#0000000d",
       justifyContent: "space-around"
     }}>
-        <Avatar src={avatar2} alt="avatar" sx={{
+      <Avatar src={avatar2} alt="avatar" sx={{
         height: 32,
         width: 32
       }} />
-        <div>
+      <div>
         <Typography variant="subtitle2" color={"text.primary"}>
-        {userData.PrimerNombre && userData.PrimerApellido 
-    ? `${userData.PrimerNombre} ${userData.PrimerApellido}` 
-    : "Usuario Desconocido"}
-          </Typography>
-          <Typography variant="caption" color={"text.primary"}>
-            {userData.RolNombre || "Rol Desconocido"}
-          </Typography>
-        </div>
-      </Box>
-      <Menu anchorEl={anchorEl} open={open} onClose={handleClose} slotProps={{
+          {userData.PrimerNombre && userData.PrimerApellido
+            ? `${userData.PrimerNombre} ${userData.PrimerApellido}`
+            : "Usuario Desconocido"}
+        </Typography>
+        <Typography variant="caption" color={"text.primary"}>
+          {userData.RolNombre || "Rol Desconocido"}
+        </Typography>
+      </div>
+    </Box>
+    <Menu anchorEl={anchorEl} open={open} onClose={handleClose} slotProps={{
       paper: {
         elevation: 0,
         sx: {
@@ -111,20 +115,20 @@ console.log("Info de usuario-->",userData );
         }
       }
     }}>
-        {profileDropdownOptions.map((option, idx) => {
+      {profileDropdownOptions.map((option, idx) => {
         const Icon = option.icon;
         return <MenuItem onClick={handleClose} key={idx}>
-              <ListItemIcon>
-                <Icon size={18} />
-              </ListItemIcon>
-              {option.link ? <Link to={option.link}>
-                  <ListItemText sx={{
+          <ListItemIcon>
+            <Icon size={18} />
+          </ListItemIcon>
+          {option.link ? <Link to={option.link}>
+            <ListItemText sx={{
               color: "text.secondary"
             }}>{option.label}</ListItemText>
-                </Link> : option.label}
-            </MenuItem>;
+          </Link> : option.label}
+        </MenuItem>;
       })}
-      </Menu>
-    </Box>;
+    </Menu>
+  </Box>;
 };
 export default UserProfile;

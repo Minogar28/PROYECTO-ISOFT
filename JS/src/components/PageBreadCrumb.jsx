@@ -14,7 +14,7 @@ const PageBreadcrumb = ({
   const breadcrumbItems = [<Link key="1" color="inherit" variant="subtitle2" underline="none" href="" sx={{
     fontWeight: 600
   }}>
-      Attex
+      Celerium
     </Link>, <Link key="2" color="inherit" variant="body2" underline="none" href="">
       {subName}
     </Link>, <Typography key="3" variant="body2">
