@@ -144,15 +144,13 @@ const repo = {
       let { Correo,Identificacion, Usuario } = objData;
       let objCorreo = await objModel.findOne({ Correo, IdEmpresa: objData.IdEmpresa });
      // Verificar si la Identificación ya está registrada
-     let objIdentificacion = await objModel.findOne({ Identificacion, IdEmpresa:objData.IdEmpresa });
+    //  let objIdentificacion = await objModel.findOne({ Identificacion, IdEmpresa:objData.IdEmpresa });
      let objUsuario = await objModel.findOne({Usuario, IdEmpresa:objData.IdEmpresa})
       let response = {};
 
       if (objCorreo) {
         throw new Error('El correo ingresado se encuentra en uso. Por favor ingrese otro correo.');
-      } else if (objIdentificacion) {
-        throw new Error('La identificación ingresada ya se encuentra en uso. Por favor ingrese otra identificación.');
-    }else{
+      } else{
         // //find object
         response = await objModel.insertMany([objData]);
       }

@@ -11,11 +11,11 @@ import {
   InputLabel,
   Select,
   MenuItem,
-  IconButton,
   ToggleButton,
   ToggleButtonGroup,
+  InputAdornment,
 } from "@mui/material";
-import { List, CalendarToday, TableChart, ViewList } from "@mui/icons-material";
+import { List, CalendarToday, TableChart, ViewList, People, Lock, CheckCircle } from "@mui/icons-material";
 import Swal from "sweetalert2";
 import { PageBreadcrumb } from "@src/components";
 
@@ -27,8 +27,6 @@ const ProyectoForm = () => {
   const [vista, setVista] = useState("Lista");
 
   const handleSave = () => {
-    // Lógica para guardar el proyecto en la base de datos
-    // Aquí podrías enviar la data a un backend o simplemente hacer un console.log
     console.log({
       nombreProyecto,
       descripcion,
@@ -37,7 +35,6 @@ const ProyectoForm = () => {
       vista,
     });
 
-    // Mostrar SweetAlert de éxito
     Swal.fire({
       icon: "success",
       title: "Proyecto guardado",
@@ -48,108 +45,141 @@ const ProyectoForm = () => {
 
   return (
     <>
-                <PageBreadcrumb title="Creación de proyecto" subName="Crear" />
+      <PageBreadcrumb title="Creación de proyecto" subName="Crear" />
 
-    <Grid container justifyContent="center" alignItems="center" style={{ minHeight: "70vh" }}>
-
-      <Grid item xs={12} md={6}>
-        <Card sx={{ borderRadius: "16px", p: 3 }}>
-          <CardContent>
-            <Typography variant="h4" align="center" gutterBottom>
-              Nuevo Proyecto
-            </Typography>
-            <Box mt={3} component="form">
-              <TextField
-                fullWidth
-                label="Nombre del Proyecto"
-                variant="outlined"
-                margin="normal"
-                value={nombreProyecto}
-                onChange={(e) => setNombreProyecto(e.target.value)}
-                required
-                error={!nombreProyecto}
-                helperText={!nombreProyecto ? "Es necesario un nombre para el proyecto." : ""}
-              />
-
-              <TextField
-                fullWidth
-                label="Descripción"
-                variant="outlined"
-                margin="normal"
-                multiline
-                rows={4}
-                value={descripcion}
-                onChange={(e) => setDescripcion(e.target.value)}
-              />
-
-              <FormControl fullWidth variant="outlined" margin="normal">
-                <InputLabel>Selecciona un equipo</InputLabel>
-                <Select
-                  value={equipo}
-                  onChange={(e) => setEquipo(e.target.value)}
-                  label="Selecciona un equipo"
-                >
-                  <MenuItem value="Equipo 1">Equipo 1</MenuItem>
-                  <MenuItem value="Equipo 2">Equipo 2</MenuItem>
-                  <MenuItem value="Equipo 3">Equipo 3</MenuItem>
-                </Select>
-              </FormControl>
-
-              <FormControl fullWidth variant="outlined" margin="normal">
-                <InputLabel>Privacidad</InputLabel>
-                <Select
-                  value={privacidad}
-                  onChange={(e) => setPrivacidad(e.target.value)}
-                  label="Privacidad"
-                >
-                  <MenuItem value="Privado">Privado</MenuItem>
-                  <MenuItem value="Compartido">Compartido</MenuItem>
-                </Select>
-              </FormControl>
-
-              <Typography variant="subtitle1" mt={2}>
-                Vista predeterminada
+      <Grid container justifyContent="center" alignItems="center" style={{ minHeight: "80vh" }}>
+        <Grid item xs={12} md={6}>
+          <Card sx={{ borderRadius: "16px", p: 3, boxShadow: 4 }}>
+            <CardContent>
+              <Typography variant="h4" align="center" gutterBottom sx={{ fontWeight: "bold"}}>
+                Nuevo Proyecto
               </Typography>
-              <ToggleButtonGroup
-                value={vista}
-                exclusive
-                onChange={(e, newVista) => setVista(newVista)}
-                fullWidth
-                sx={{ mt: 1 }}
-              >
-                <ToggleButton value="Lista">
-                  <ViewList />
-                  Lista
-                </ToggleButton>
-                <ToggleButton value="Tablero">
-                  <TableChart />
-                  Tablero
-                </ToggleButton>
-                <ToggleButton value="Cronograma">
-                  <List />
-                  Cronograma
-                </ToggleButton>
-                <ToggleButton value="Calendario">
-                  <CalendarToday />
-                  Calendario
-                </ToggleButton>
-              </ToggleButtonGroup>
+              <Box mt={3} component="form">
+                <TextField
+                  fullWidth
+                  label="Nombre del Proyecto"
+                  variant="outlined"
+                  margin="normal"
+                  value={nombreProyecto}
+                  onChange={(e) => setNombreProyecto(e.target.value)}
+                  required
+                  error={!nombreProyecto}
+                  helperText={!nombreProyecto ? "Es necesario un nombre para el proyecto." : ""}
+                  InputProps={{
+                    startAdornment: (
+                      <InputAdornment position="start">
+                        <CheckCircle color={nombreProyecto ? "primary" : "disabled"} />
+                      </InputAdornment>
+                    ),
+                  }}
+                />
 
-              <Box mt={4} display="flex" justifyContent="center">
-                <Button
-                  variant="contained"
-                  color="primary"
-                  onClick={handleSave}
-                  disabled={!nombreProyecto}
+                <TextField
+                  fullWidth
+                  label="Descripción"
+                  variant="outlined"
+                  margin="normal"
+                  multiline
+                  rows={4}
+                  value={descripcion}
+                  onChange={(e) => setDescripcion(e.target.value)}
+                  InputProps={{
+                    startAdornment: (
+                      <InputAdornment position="start">
+                        <List color="action" />
+                      </InputAdornment>
+                    ),
+                  }}
+                />
+
+                <FormControl fullWidth variant="outlined" margin="normal">
+                  <InputLabel>Selecciona un equipo</InputLabel>
+                  <Select
+                    value={equipo}
+                    onChange={(e) => setEquipo(e.target.value)}
+                    label="Selecciona un equipo"
+                    startAdornment={
+                      <InputAdornment position="start">
+                        <People />
+                      </InputAdornment>
+                    }
+                  >
+                    <MenuItem value="Equipo 1">Equipo 1</MenuItem>
+                    <MenuItem value="Equipo 2">Equipo 2</MenuItem>
+                    <MenuItem value="Equipo 3">Equipo 3</MenuItem>
+                  </Select>
+                </FormControl>
+
+                <FormControl fullWidth variant="outlined" margin="normal">
+                  <InputLabel>Privacidad</InputLabel>
+                  <Select
+                    value={privacidad}
+                    onChange={(e) => setPrivacidad(e.target.value)}
+                    label="Privacidad"
+                    startAdornment={
+                      <InputAdornment position="start">
+                        <Lock />
+                      </InputAdornment>
+                    }
+                  >
+                    <MenuItem value="Privado">Privado</MenuItem>
+                    <MenuItem value="Compartido">Compartido</MenuItem>
+                  </Select>
+                </FormControl>
+
+                <Typography variant="subtitle1" mt={3} sx={{ fontWeight: "bold", color: "#2c3e50" }}>
+                  Vista predeterminada
+                </Typography>
+                <ToggleButtonGroup
+                  value={vista}
+                  exclusive
+                  onChange={(e, newVista) => setVista(newVista)}
+                  fullWidth
+                  sx={{ mt: 1 }}
                 >
-                  Crear Proyecto
-                </Button>
+                  <ToggleButton value="Lista" sx={{ flexGrow: 1, borderRadius: 1 }}>
+                    <ViewList sx={{ mr: 1 }} />
+                    Lista
+                  </ToggleButton>
+                  <ToggleButton value="Tablero" sx={{ flexGrow: 1, borderRadius: 1 }}>
+                    <TableChart sx={{ mr: 1 }} />
+                    Tablero
+                  </ToggleButton>
+                  <ToggleButton value="Cronograma" sx={{ flexGrow: 1, borderRadius: 1 }}>
+                    <List sx={{ mr: 1 }} />
+                    Cronograma
+                  </ToggleButton>
+                  <ToggleButton value="Calendario" sx={{ flexGrow: 1, borderRadius: 1 }}>
+                    <CalendarToday sx={{ mr: 1 }} />
+                    Calendario
+                  </ToggleButton>
+                </ToggleButtonGroup>
+
+                <Box mt={4} display="flex" justifyContent="center">
+                  <Button
+                    variant="contained"
+                    color="primary"
+                    onClick={handleSave}
+                    disabled={!nombreProyecto}
+                    sx={{
+                      borderRadius: 2,
+                      px: 4,
+                      boxShadow: 3,
+                      transition: "all 0.3s ease",
+                      "&:hover": {
+                        transform: "scale(1.05)",
+                        boxShadow: 5,
+                      },
+                    }}
+                  >
+                    Crear Proyecto
+                  </Button>
+                </Box>
               </Box>
-            </Box>
-          </CardContent>
-        </Card>
+            </CardContent>
+          </Card>
+        </Grid>
       </Grid>
-    </Grid>
     </>
   );
 };

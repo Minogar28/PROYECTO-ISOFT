@@ -19,7 +19,8 @@ const AuthLayout = ({
         flexDirection: "column",
         alignItems: "center",
         justifyContent: "center",
-        height: "100vh"
+        minHeight: "100vh",
+        
       }}>
           <Box sx={{
           display: "flex",

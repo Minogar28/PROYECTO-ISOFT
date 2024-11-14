@@ -157,7 +157,8 @@ const appsRoutes = [{
 {
   path: "/apps/micuenta",
   element: <LoadComponent component={lazy(() => import("@src/pages/cuenta/index.jsx"))} />
-},{
+},
+{
   path: "/crear/proyecto",
   element: <LoadComponent component={lazy(() => import("@src/pages/crearProyecto"))} />
 },
