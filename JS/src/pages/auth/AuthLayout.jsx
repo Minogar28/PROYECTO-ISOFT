@@ -90,7 +90,7 @@ const AuthLayout = ({
             textAlign: "center",
             p: "24px"
           }} color={"text.secondary"}>
-              {new Date().getFullYear()} © Attex - Coderthemes.com
+              {/* {new Date().getFullYear()} © Attex - Coderthemes.com */}
             </Typography>
           {/* <Link to={"https://coderthemes.com/"} target="_blank" style={{
           color: "unset"   }}           >

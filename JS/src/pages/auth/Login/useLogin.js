@@ -7,6 +7,7 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import { useSnackbar } from "notistack";
 import { gsUrlApi } from "../../../configuracionApi/apiConfig";
+import Swal from "sweetalert2";
 
 export default function useLogin() {
   const [loading, setLoading] = useState(false);
@@ -69,8 +70,13 @@ console.log("aaaa...", data);
         // Redirecciona después del login
         navigate(redirectUrl);
       } else {
-        // Muestra un mensaje de error si la autenticación falla
-        enqueueSnackbar(data.message || "Login failed", { variant: "error" });
+        Swal.fire({
+          icon: "error",
+          title: "Usuario no encontrado",
+          text:"Verifica que ingresaste los datos correctamente",
+          timer: 2000, // Mensaje visible durante 3 segundos
+          showConfirmButton: "Aceptar",
+        });
       }
     } catch (error) {
       console.error("Login error:", error);
