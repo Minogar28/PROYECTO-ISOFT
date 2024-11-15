@@ -314,7 +314,7 @@ const repo = {
     try {
       // Define el query para encontrar al usuario en la base de datos
       let query = {
-        Usuario: { $regex: findObject.Login, $options: "i" },
+        Correo: { $regex: findObject.Login, $options: "i" },
         Clave: findObject.Clave
       };
   
@@ -330,7 +330,8 @@ const repo = {
         IdRol: 1,
         RolNombre: 1,
         PrimerApellido: 1,
-        Celular: 1
+        Celular: 1,
+        Usuario:1
       }).populate('IdRol');
       
       console.log("respuesta--", response);
