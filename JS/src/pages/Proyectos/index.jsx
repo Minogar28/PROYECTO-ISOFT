@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Box,
   Typography,
@@ -8,30 +8,20 @@ import {
   ListItem,
   ListItemText,
   ListItemButton,
-  Card,
+  Card,Grid,
   CardContent,
   Avatar,
 } from "@mui/material";
 import { Folder, DateRange, Person, AddBox, Group } from "@mui/icons-material";
-import ProjectView from "./gestionProyectos"; // Asegúrate de importar el componente ProjectView
+import ProjectView from "./gestionProyectos";
 import { PageBreadcrumb } from "@src/components";
-
-// Ejemplo de proyectos creados y proyectos a los que perteneces
-const createdProjects = [
-  { id: 1, name: "Proyecto A", fechaCreacion: "01/01/2023", responsable: "Juan Pérez" },
-  { id: 2, name: "Proyecto B", fechaCreacion: "15/02/2023", responsable: "Ana Gómez" },
-];
-
-const joinedProjects = [
-  { id: 3, name: "Proyecto C", fechaCreacion: "10/03/2023", responsable: "Luis Martínez" },
-  { id: 4, name: "Proyecto D", fechaCreacion: "20/04/2023", responsable: "Carlos López" },
-];
+import { useProyecto } from "./useProyecto";  // Importa el hook personalizado
 
 function ProjectList({ projects, onSelectProject }) {
   return (
     <List>
       {projects.map((project) => (
-        <ListItem key={project.id} disablePadding sx={{ mb: 2 }}>
+        <ListItem key={project._id} disablePadding sx={{ mb: 2 }}>
           <ListItemButton onClick={() => onSelectProject(project)} sx={{ borderRadius: 2, boxShadow: 1, p: 2 }}>
             <Avatar sx={{ bgcolor: "primary.main", mr: 2, width: 56, height: 56 }}>
               <Folder fontSize="large" />
@@ -39,18 +29,16 @@ function ProjectList({ projects, onSelectProject }) {
             <ListItemText
               primary={
                 <Typography variant="h6" sx={{ fontWeight: "bold" }}>
-                  {project.name}
+                  {project.nombreProyecto}
                 </Typography>
               }
               secondary={
                 <>
                   <Box display="flex" alignItems="center" mt={1}>
                     <DateRange fontSize="small" sx={{ mr: 1, color: "text.secondary" }} />
-                    <Typography variant="body2" color="text.secondary">Fecha de creación: {project.fechaCreacion}</Typography>
-                  </Box>
-                  <Box display="flex" alignItems="center" mt={1}>
-                    <Person fontSize="small" sx={{ mr: 1, color: "text.secondary" }} />
-                    <Typography variant="body2" color="text.secondary">Responsable: {project.responsable}</Typography>
+                    <Typography variant="body2" color="text.secondary">
+                      Fecha de creación: {project.fechaDeCreacion}
+                    </Typography>
                   </Box>
                 </>
               }
@@ -63,8 +51,13 @@ function ProjectList({ projects, onSelectProject }) {
 }
 
 export default function Main() {
+  const { proyectos, loading, error, listarProyectos } = useProyecto();
   const [selectedProject, setSelectedProject] = useState(null);
-  const [tabIndex, setTabIndex] = useState(0); // Estado para gestionar la pestaña seleccionada
+  const [tabIndex, setTabIndex] = useState(0);
+
+  useEffect(() => {
+    listarProyectos();
+  }, [tabIndex]);  // Actualiza la lista al cambiar de pestaña
 
   const handleSelectProject = (project) => {
     setSelectedProject(project);
@@ -75,19 +68,15 @@ export default function Main() {
   };
 
   return (
-
     <Box>
       <PageBreadcrumb title="Gestión de proyecto" subName="Proyectos" />
 
       {selectedProject ? (
         <ProjectView project={selectedProject} />
       ) : (
-        <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center",minWidth:"100vh", minHeight: "70vh", p: 3 }}>
-          <Card sx={{ width: "100%", borderRadius: 4, boxShadow: 5, p: 3, }}>
+        <Grid sx={{ display: "flex", justifyContent: "center", alignItems: "center", minHeight: "80vh", p: 3 }}>
+          <Card sx={{ width: "100%", borderRadius: 4, boxShadow: 5, p: 3 }}>
             <CardContent>
-              <Typography variant="h5" align="center" gutterBottom sx={{ mb: 3, fontWeight: "bold", color: "primary.main" }}>
-                {tabIndex === 0 ? "Proyectos creados" : "Proyectos a los que pertenezco"}
-              </Typography>
 
               <Tabs
                 value={tabIndex}
@@ -102,17 +91,19 @@ export default function Main() {
                 }}
               >
                 <Tab icon={<AddBox />} label="Proyectos creados" />
-                <Tab icon={<Group />} label="Proyectos a los que pertenezco" />
+                <Tab icon={<Group />} label="Proyectos a los que perteneces" />
               </Tabs>
 
-              {tabIndex === 0 ? (
-                <ProjectList projects={createdProjects} onSelectProject={handleSelectProject} />
+              {loading ? (
+                <Typography align="center">Cargando proyectos...</Typography>
+              ) : error ? (
+                <Typography align="center" color="error">Error: {error}</Typography>
               ) : (
-                <ProjectList projects={joinedProjects} onSelectProject={handleSelectProject} />
+                <ProjectList projects={proyectos} onSelectProject={handleSelectProject} />
               )}
             </CardContent>
           </Card>
-        </Box>
+        </Grid>
       )}
     </Box>
   );

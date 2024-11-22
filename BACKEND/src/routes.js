@@ -18,7 +18,7 @@ module.exports = () => {
   const loginController = require("./controllers/login");
   const rolesController = require("./controllers/roles");
   const usuariosAdministrativosController = require("./controllers/usuariosAdministrativos");
-
+  const proyectoController = require("./controllers/proyecto")
 
   // Aplica la validación JWT a todas las rutas debajo con authenticateJWT
   router.use('/interfaces', authenticateJWT);
@@ -53,6 +53,14 @@ requestsRouter.post(
    requestsRouter.post("/roles/eliminar", rolesController.eliminar);
    requestsRouter.post("/roles/actualizar", rolesController.actualizar);
    requestsRouter.post("/roles/consultar", rolesController.consultar);
+
+  //Proyecto
+ requestsRouter.get("/proyecto/listar",proyectoController.listar);
+ requestsRouter.get("/proyecto/:key/:value",proyectoController.buscar);
+ requestsRouter.post("/proyecto/insertar",proyectoController.insertar);
+ requestsRouter.post("/proyecto/eliminar",proyectoController.eliminar);
+ requestsRouter.post("/proyecto/actualizar",proyectoController.actualizar);
+ requestsRouter.post("/proyecto/consultar",proyectoController.consultar);
 
    
   //request

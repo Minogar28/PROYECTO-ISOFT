@@ -6,8 +6,11 @@ const proyectoSchema = schema({
   nombreProyecto: String,
   descripcion: String,
  fechaDeCreacion:String,
+ fechaFinalizacion:String,
  privacidad:String,
  estado:String,
+ vista:String,
+ IdAdmin: { type: schema.Types.ObjectId, ref: 'seguridad_usuariosAdministrativos' }, 
  equipo:[],
  objetivos:[]
 });

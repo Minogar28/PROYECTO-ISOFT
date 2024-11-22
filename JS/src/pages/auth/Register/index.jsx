@@ -63,6 +63,7 @@ const Registro = () => {
           SegundoNombre: values.segundoNombre,
           PrimerApellido: values.primerApellido,
           SegundoApellido: values.segundoApellido,
+          RolNombre:"Administrador"
         }),
       });
 

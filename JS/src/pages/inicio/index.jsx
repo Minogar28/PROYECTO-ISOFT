@@ -5,6 +5,8 @@ import { AssignmentTurnedIn, Person, EventNote, Settings } from "@mui/icons-mate
 import logo from "@src/assets/images/iconoCelerium.png"; // Importa el logo
 
 const Inicio = () => {
+  const info = JSON.parse(localStorage.getItem('userSession'));
+  const userData = info.userData[0];
   return (
     <>
       <PageBreadcrumb title="Inicio" subName="Páginas" />
@@ -18,7 +20,7 @@ const Inicio = () => {
             {new Date().toLocaleDateString("es-ES", { weekday: "long", day: "numeric", month: "long" })}
           </Typography>
           <Typography variant="h4" sx={{ fontWeight: "bold", mt: 1 }}>
-            Buenas noches, Juan
+            Buenas noches, {userData.Usuario||""}
           </Typography>
           <Typography variant="body1" sx={{ mt: 2 }}>
             ¡Esperamos que tengas un día productivo! Recuerda revisar tus pendientes y celebrar tus logros.

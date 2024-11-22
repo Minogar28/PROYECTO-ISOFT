@@ -1,54 +1,77 @@
-import { Avatar, Box, Card, CardContent, Grid, Typography, useTheme, Button, TextField, Switch } from "@mui/material";
+import { Avatar, Box, Card, CardContent, Grid, Typography, useTheme, Button, TextField, Switch, InputAdornment } from "@mui/material";
 import { PageBreadcrumb } from "@src/components";
-import Chart from "chart.js/auto";
 import { useEffect, useState } from "react";
 import { gsUrlApi } from "../../configuracionApi/apiConfig";
-import { AccountCircle, Save as SaveIcon } from "@mui/icons-material";
+import { AccountCircle, Save as SaveIcon, CalendarToday, Phone, Mail, Person, LocationOn, Badge } from "@mui/icons-material";
 
 const Profile = () => {
   const theme = useTheme();
 
   const [infoUser, setInfoUser] = useState({
-    NombreCompleto: "Nombre no disponible",
-    Rol: "Rol no disponible",
-    Celular: "Celular no disponible",
+    FechaNacimiento: "",
+   
+    PrimerNombre: "",
+    SegundoNombre: "",
+    PrimerApellido: "",
+    SegundoApellido: "",
+    TipoIdentificacion: "",
+    NombreTipoIdentificacion: "",
+    Usuario: "",
+    Clave: "",
     Correo: "Correo no disponible",
-    about: "No disponible",
+    Celular: "",
+    Direccion: "",
+    Telefono: "",
     NumeroIdentificacion: "Número no disponible",
   });
 
-  const [editMode, setEditMode] = useState(false); // Estado para el modo de edición
+  const [editMode, setEditMode] = useState(false);
 
   useEffect(() => {
     const info = JSON.parse(localStorage.getItem("userSession"));
     const userData = info?.userData[0];
     if (userData) {
       setInfoUser({
-        NombreCompleto: `${userData.PrimerNombre} ${userData.PrimerApellido}` || "Nombre no disponible",
-        Rol: userData.RolNombre || "Rol no disponible",
-        Celular: userData.Celular || "Celular no disponible",
+        FechaNacimiento: userData.FechaNacimiento || "",
+        
+        PrimerNombre: userData.PrimerNombre || "",
+        SegundoNombre: userData.SegundoNombre || "",
+        PrimerApellido: userData.PrimerApellido || "",
+        SegundoApellido: userData.SegundoApellido || "",
+        TipoIdentificacion: userData.TipoIdentificacion || "",
+        NombreTipoIdentificacion: userData.NombreTipoIdentificacion || "",
+        Usuario: userData.Usuario || "",
+        Clave: userData.Clave || "",
         Correo: userData.Correo || "Correo no disponible",
-        about: userData.About || "No disponible",
+        Celular: userData.Celular || "",
+        Direccion: userData.Direccion || "",
+        Telefono: userData.Telefono || "",
         NumeroIdentificacion: userData.NumeroIdentificacion || "Número no disponible",
       });
     }
   }, []);
 
   const handleSave = async () => {
+    const fullName = `${infoUser.PrimerNombre} ${infoUser.SegundoNombre} ${infoUser.PrimerApellido} ${infoUser.SegundoApellido}`;
+    const updatedUser = { ...infoUser, NombreCompleto: fullName };
+    const info = JSON.parse(localStorage.getItem('userSession'));
+  
+    const Token = info.token
     try {
       const response = await fetch(`${gsUrlApi}/usuariosAdministrativos/actualizar`, {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(infoUser),
+        headers: {   'Authorization': `Bearer ${Token}`,
+        "Content-Type": "application/json",
+        'Accept': 'application/json', },
+        body: JSON.stringify(updatedUser),
       });
       const result = await response.json();
-
+      console.log("Que hizo..", result);
+      
       if (!result.Error) {
-        setInfoUser(result.datos); // Actualizar el estado con los datos del servidor
+        setInfoUser(result.datos); 
         alert("Perfil actualizado correctamente");
-        setEditMode(false); // Salir del modo de edición después de guardar
+        setEditMode(false);
       } else {
         alert(`Error al actualizar: ${result.Mensaje}`);
       }
@@ -68,6 +91,20 @@ const Profile = () => {
       [name]: value,
     }));
   };
+
+  const fields = [
+    { label: "Número de Identificación", name: "NumeroIdentificacion", icon: <Badge /> },
+    { label: "Primer Nombre", name: "PrimerNombre", icon: <Person /> },
+    { label: "Segundo Nombre", name: "SegundoNombre", icon: <Person /> },
+    { label: "Primer Apellido", name: "PrimerApellido", icon: <Person /> },
+    { label: "Segundo Apellido", name: "SegundoApellido", icon: <Person /> },
+    { label: "Teléfono móvil", name: "Celular", icon: <Phone /> },
+    { label: "Correo electrónico", name: "Correo", icon: <Mail /> },
+    { label: "Fecha de Nacimiento", name: "FechaNacimiento", icon: <CalendarToday /> },
+    { label: "Tipo de Identificación", name: "TipoIdentificacion", icon: <Badge /> },
+    { label: "Dirección", name: "Direccion", icon: <LocationOn /> },
+    { label: "Teléfono", name: "Telefono", icon: <Phone /> },
+  ];
 
   return (
     <>
@@ -99,57 +136,51 @@ const Profile = () => {
                 </Avatar>
 
                 <Typography variant="h5" fontWeight="bold" color="text.primary" mb={2}>
-                  {infoUser.NombreCompleto}
+                  {`${infoUser.PrimerNombre} ${infoUser.PrimerApellido}`}
                 </Typography>
 
                 <Typography variant="body1" color="text.secondary" fontSize="16px" mb={3}>
-                  {infoUser.Rol}
+                  {infoUser.RolNombre}
                 </Typography>
 
-                <Box
-                  display="flex"
-                  flexDirection="column"
-                  alignItems="center"
-                  gap={2}
-                  width="100%"
-                  maxWidth="350px"
-                  mx="auto"
-                >
-                  {[
-                    { label: "Número de Identificación", name: "NumeroIdentificacion", value: infoUser.NumeroIdentificacion },
-                    { label: "Nombre completo", name: "NombreCompleto", value: infoUser.NombreCompleto },
-                    { label: "Teléfono móvil", name: "Celular", value: infoUser.Celular },
-                    { label: "Correo electrónico", name: "Correo", value: infoUser.Correo },
-                  ].map((item, index) => (
-                    <Box
-                      key={index}
-                      width="100%"
-                      p={2}
-                      borderRadius="12px"
-                      boxShadow={theme.shadows[1]}
-                      bgcolor={theme.palette.grey[50]}
-                      textAlign="center"
-                    >
-                      <Typography fontWeight="bold" variant="body2" color="text.secondary">
-                        {item.label}
-                      </Typography>
-                      {editMode ? (
-                        <TextField
-                          variant="outlined"
-                          fullWidth
-                          name={item.name}
-                          value={item.value}
-                          onChange={handleChange}
-                          sx={{ mt: 1 }}
-                        />
-                      ) : (
-                        <Typography variant="body1" color="text.primary" mt={0.5}>
-                          {item.value}
+                <Grid container spacing={2}>
+                  {fields.map((field, index) => (
+                    <Grid item xs={12} sm={6} key={index}>
+                      <Box
+                        p={2}
+                        borderRadius="12px"
+                        boxShadow={theme.shadows[1]}
+                        bgcolor={theme.palette.grey[50]}
+                        textAlign="center"
+                      >
+                        <Typography fontWeight="bold" variant="body2" color="text.secondary">
+                          {field.label}
                         </Typography>
-                      )}
-                    </Box>
+                        {editMode ? (
+                          <TextField
+                            variant="outlined"
+                            fullWidth
+                            name={field.name}
+                            value={infoUser[field.name] || ""}
+                            onChange={handleChange}
+                            InputProps={{
+                              startAdornment: (
+                                <InputAdornment position="start">
+                                  {field.icon}
+                                </InputAdornment>
+                              ),
+                            }}
+                            sx={{ mt: 1 }}
+                          />
+                        ) : (
+                          <Typography variant="body1" color="text.primary" mt={0.5}>
+                            {infoUser[field.name] || "No disponible"}
+                          </Typography>
+                        )}
+                      </Box>
+                    </Grid>
                   ))}
-                </Box>
+                </Grid>
 
                 <Box display="flex" justifyContent="center" alignItems="center" mt={3} gap={2}>
                   <Switch

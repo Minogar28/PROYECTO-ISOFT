@@ -17,7 +17,7 @@ connect().then((isConnected) => {
     if (isConnected) {
         // Iniciar el servidor Express si la conexión fue exitosa
         const app = require('./app');
-        app.listen(PORT, () => {
+        app.listen(PORT,'0.0.0.0', () => {
             console.log(`Servidor escuchando en el puerto ${PORT} en el entorno ${NODE_ENV}`);
 
             if (isConnected) {

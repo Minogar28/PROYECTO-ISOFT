@@ -2,17 +2,12 @@ const mongoose = require('mongoose');
 const schema = mongoose.Schema;
 
 const usuariosSchema = schema({
-    Id: String,
-    IdEmpresa: { type: schema.Types.ObjectId, ref: 'empresas' },
-    Identificacion: String,
-    UrlResultado: String,
-    IdRelacional: String,
+    IdEmpresa: { type: schema.Types.ObjectId, ref: 'empresas' }, 
     // Fecha: Date,
     FechaNacimiento: String,
     Tipo: String,
     Clase: String,
     Descripcion: String,
-    Usuarios: String,
     PrimerNombre: String,
     SegundoNombre: String,
     PrimerApellido: String,
@@ -29,13 +24,10 @@ const usuariosSchema = schema({
     Telefono: String,
     NumeroIdentificacion: String,
     IdRol: { type: schema.Types.ObjectId, ref: 'roles' },
-    RolNombre: "String",
+    RolNombre: String,
     Servicios: [],
     Cargo: String,
     IdCargo: String,
-    UsuarioFuncionario: String
-    // Rol: String,
-    // IdRol: String,
 });
 
 const usuariosAdministrativos = mongoose.model('seguridad_usuariosAdministrativos', usuariosSchema);
