@@ -26,7 +26,7 @@ import Kanban from "../apps/Kanban";
 import Informes from "./informes";
 import ProjectDetails from "./detallesProyecto"; // Importar el nuevo componente
 import Tareas from "./tareas";
-
+import Seguridad from "./seguridad"
 function TabPanel(props) {
   const { children, value, index, ...other } = props;
   return (
@@ -73,7 +73,7 @@ function ProjectView({ project }) {
     <>
       <Grid sx={{ flexGrow: 1, p: 3, maxWidth: "100%", margin: "auto" }}>
         <Typography variant="h4" align="center" gutterBottom sx={{ mb: 4, fontWeight: "bold" }}>
-          Proyecto {project.nombreProyecto}
+          {project.nombreProyecto}
         </Typography>
 
         <Box sx={{ borderRadius: 2, boxShadow: 3, overflow: "hidden" }}>
@@ -101,7 +101,13 @@ function ProjectView({ project }) {
           <TabPanel value={value} index={0}>
             {console.log("pro", project)}
 
-            <Tareas tasks={tasks} setTasks={setTasks} colaboradores={project.equipo} />
+            <Tareas
+              tasks={tasks}
+              setTasks={setTasks}
+              colaboradores={project.equipo} // Lista de colaboradores del proyecto
+              IdProyecto={project._id} // ID del proyecto
+            />
+
           </TabPanel>
 
           <TabPanel value={value} index={1}>
@@ -121,17 +127,10 @@ function ProjectView({ project }) {
           </TabPanel>
 
           <TabPanel value={value} index={5}>
-            <Typography variant="h6">Vista de Seguridad (en construcción)</Typography>
+            <Seguridad proyecto ={project}/>
           </TabPanel>
 
-          <TabPanel value={value} index={6}>
-            <Typography variant="h6">Vista de Mensajes (en construcción)</Typography>
-          </TabPanel>
-
-          <TabPanel value={value} index={7}>
-            <Typography variant="h6">Vista de Seguridad (en construcción)</Typography>
-          </TabPanel>
-
+          
 
 
         </Box>

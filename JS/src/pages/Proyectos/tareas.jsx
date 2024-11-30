@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Box,
   Button,
@@ -15,102 +15,84 @@ import {
   Collapse,
 } from "@mui/material";
 import { Add } from "@mui/icons-material";
-import { LuCalendar, LuChevronDown, LuListChecks, LuMessageSquare } from "react-icons/lu";
+import { LuCalendar, LuChevronDown } from "react-icons/lu";
+import { useProyecto } from "./useProyecto";
 
-function Tareas({ colaboradores }) {
-  const tasksRef = useRef([]); // Usamos un useRef para almacenar las tareas sin desencadenar renderizaciones
+function Tareas({ colaboradores, IdProyecto }) {
+  const [taskSectionOpen, setTaskSectionOpen] = useState(true);
   const [newTask, setNewTask] = useState({
-    title: "",
-    description: "",
-    priority: "Baja",
-    due_date: "",
-    assignee: "",
+    nombreTarea: "",
+    descripcion: "",
+    prioridad: "Baja",
+    fechaFinalizacion: "",
+    asignados: "",
   });
   const [openModal, setOpenModal] = useState(false);
-  const [taskSectionOpen, setTaskSectionOpen] = useState(true);
-  const [, setForceUpdate] = useState(0); // Usamos un dummy state para forzar re-renderizado en TaskSection si es necesario
 
-  const handleAddTask = () => {
-    if (newTask.title && newTask.due_date && newTask.assignee) {
-      const creationDate = new Date().toISOString().split("T")[0]; // Fecha de creación automática
-      const newTaskWithId = {
-        ...newTask,
-        id: tasksRef.current.length + 1,
-        creation_date: creationDate,
-        checklists: [],
-      };
-      tasksRef.current.push(newTaskWithId); // Añadimos la tarea a la referencia mutable
-      setNewTask({ title: "", description: "", priority: "Baja", due_date: "", assignee: "" });
-      setOpenModal(false);
-      setForceUpdate((prev) => prev + 1); // Forzamos re-renderizado sólo en TaskSection si es necesario
+  const { tareas, listarTareas, agregarTarea } = useProyecto(); // Hook para interactuar con la API
+
+  // Cargar las tareas al montar el componente
+  useEffect(() => {
+    listarTareas();
+  }, [listarTareas]);
+
+  // Filtrar las tareas por IdProyecto
+  const filteredTasks = tareas.filter((task) => task.IdProyecto === IdProyecto);
+
+  const handleAddTask = async () => {
+    if (newTask.nombreTarea && newTask.fechaFinalizacion && newTask.asignados) {
+      try {
+        // Llamamos a la API para agregar la tarea
+        const tareaCreada = await agregarTarea({
+          ...newTask,
+          IdProyecto, // Pasamos el ID del proyecto
+          estado: "Pendiente",
+          fechaDeCreacion: new Date().toISOString(),
+        });
+
+        // Actualizamos la lista local de tareas llamando a `listarTareas`
+        listarTareas();
+        setNewTask({
+          nombreTarea: "",
+          descripcion: "",
+          prioridad: "Baja",
+          fechaFinalizacion: "",
+          asignados: "",
+        });
+        setOpenModal(false);
+      } catch (error) {
+        console.error("Error al agregar tarea:", error.message);
+      }
     }
   };
 
-  const Task = ({ task, classname }) => {
-    const [completed, setCompleted] = useState(false);
-
-    return (
-      <Box
-        sx={{
-          classname,
-          display: "grid",
-          gridTemplateColumns: "repeat(2, minmax(0, 1fr))",
-          gap: "16px",
-          mb: 2,
-        }}
-      >
-        <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-          <Checkbox
-            id={`task-${task.id}`}
-            checked={completed}
-            onChange={() => setCompleted(!completed)}
-          />
-          <Typography component="label" htmlFor={`task-${task.id}`} sx={{ fontWeight: 500 }}>
-            {task.title}
-          </Typography>
-        </Box>
-        <Box sx={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-          <Typography sx={{ fontWeight: 500 }}>{task.assignee}</Typography>
-          <Box sx={{ display: "flex", alignItems: "center", gap: 1.5 }}>
-            <Typography sx={{ display: "flex", alignItems: "center" }}>
-              <LuCalendar size={16} style={{ marginRight: "6px" }} />
-              {task.due_date}
-            </Typography>
-            <Typography sx={{ display: "flex", alignItems: "center" }}>
-              <LuListChecks size={16} style={{ marginRight: "6px" }} />
-              {task.checklists.length} / {task.checklists.length}
-            </Typography>
-            <Typography sx={{ display: "flex", alignItems: "center" }}>
-              <LuMessageSquare size={16} style={{ marginRight: "6px" }} />
-              21
-            </Typography>
-            <Typography
-              sx={{
-                borderRadius: "4px",
-                fontSize: "10px",
-                fontWeight: 500,
-                p: "4px",
-                bgcolor:
-                  task.priority === "Alta"
-                    ? "error.lighter"
-                    : task.priority === "Medio"
-                    ? "warning.lighter"
-                    : "success.lighter",
-                color:
-                  task.priority === "Alta"
-                    ? "error.darker"
-                    : task.priority === "Medio"
-                    ? "warning.darker"
-                    : "success.darker",
-              }}
-            >
-              {task.priority}
-            </Typography>
-          </Box>
-        </Box>
+  const Task = ({ task }) => (
+    <Box
+      key={task._id.$oid}
+      sx={{
+        display: "grid",
+        gridTemplateColumns: "repeat(2, minmax(0, 1fr))",
+        gap: "16px",
+        mb: 2,
+      }}
+    >
+      <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+        <Checkbox id={`task-${task._id.$oid}`} />
+        <Typography component="label" htmlFor={`task-${task._id.$oid}`} sx={{ fontWeight: 500 }}>
+          {task.nombreTarea}
+        </Typography>
       </Box>
-    );
-  };
+      <Box sx={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+        <Typography sx={{ fontWeight: 500 }}>
+          {task.asignados && task.asignados.length > 0 ? task.asignados.join(", ") : "No asignados"}
+        </Typography>
+        <Typography sx={{ display: "flex", alignItems: "center" }}>
+          <LuCalendar size={16} style={{ marginRight: "6px" }} />
+          {task.fechaFinalizacion}
+        </Typography>
+      </Box>
+    </Box>
+  );
 
   return (
     <>
@@ -142,14 +124,17 @@ function Tareas({ colaboradores }) {
               sx={{ mb: 2, cursor: "pointer", fontWeight: 500 }}
             >
               <LuChevronDown
-                style={{ marginRight: "8px", transform: taskSectionOpen ? "rotate(0deg)" : "rotate(-90deg)" }}
+                style={{
+                  marginRight: "8px",
+                  transform: taskSectionOpen ? "rotate(0deg)" : "rotate(-90deg)",
+                }}
               />
-              Lista de Tareas ({tasksRef.current.length})
+              Lista de Tareas ({filteredTasks.length})
             </Typography>
             <Collapse in={taskSectionOpen}>
               <Card sx={{ p: 2 }}>
-                {tasksRef.current.map((task, idx) => (
-                  <Task key={idx} task={task} />
+                {filteredTasks.map((task) => (
+                  <Task key={task._id.$oid} task={task} />
                 ))}
               </Card>
             </Collapse>
@@ -180,8 +165,8 @@ function Tareas({ colaboradores }) {
             fullWidth
             label="Nombre de la tarea"
             variant="outlined"
-            value={newTask.title}
-            onChange={(e) => setNewTask({ ...newTask, title: e.target.value })}
+            value={newTask.nombreTarea}
+            onChange={(e) => setNewTask({ ...newTask, nombreTarea: e.target.value })}
             sx={{ mb: 2 }}
           />
           <TextField
@@ -190,18 +175,18 @@ function Tareas({ colaboradores }) {
             multiline
             rows={3}
             variant="outlined"
-            value={newTask.description}
-            onChange={(e) => setNewTask({ ...newTask, description: e.target.value })}
+            value={newTask.descripcion}
+            onChange={(e) => setNewTask({ ...newTask, descripcion: e.target.value })}
             sx={{ mb: 2 }}
           />
           <FormControl fullWidth sx={{ mb: 2 }}>
             <InputLabel>Prioridad</InputLabel>
             <Select
-              value={newTask.priority}
-              onChange={(e) => setNewTask({ ...newTask, priority: e.target.value })}
+              value={newTask.prioridad}
+              onChange={(e) => setNewTask({ ...newTask, prioridad: e.target.value })}
             >
               <MenuItem value="Baja">Baja</MenuItem>
-              <MenuItem value="Medio">Media</MenuItem>
+              <MenuItem value="Media">Media</MenuItem>
               <MenuItem value="Alta">Alta</MenuItem>
             </Select>
           </FormControl>
@@ -211,23 +196,23 @@ function Tareas({ colaboradores }) {
             type="date"
             variant="outlined"
             InputLabelProps={{ shrink: true }}
-            value={newTask.due_date}
-            onChange={(e) => setNewTask({ ...newTask, due_date: e.target.value })}
+            value={newTask.fechaFinalizacion}
+            onChange={(e) => setNewTask({ ...newTask, fechaFinalizacion: e.target.value })}
             sx={{ mb: 2 }}
           />
-          <FormControl fullWidth sx={{ mb: 3 }}>
-            <InputLabel>Asignado a</InputLabel>
-            <Select
-              value={newTask.assignee}
-              onChange={(e) => setNewTask({ ...newTask, assignee: e.target.value })}
-            >
-              {colaboradores.map((colaborador, index) => (
-                <MenuItem key={index} value={colaborador}>
-                  {colaborador}
-                </MenuItem>
-              ))}
-            </Select>
-          </FormControl>
+       <FormControl fullWidth sx={{ mb: 3 }}>
+          <InputLabel>Asignado a</InputLabel>
+          <Select
+            value={newTask.asignados}
+            onChange={(e) => setNewTask({ ...newTask, asignados: e.target.value })}
+          >
+            {colaboradores.map((colaborador, index) => (
+              <MenuItem key={index} value={colaborador._id}>
+                {colaborador.NombreCompleto}
+              </MenuItem>
+            ))}
+          </Select>
+        </FormControl>
           <Button fullWidth variant="contained" color="primary" onClick={handleAddTask}>
             Guardar
           </Button>

@@ -414,48 +414,33 @@ const repo = {
     }
   },
 
-  consultar: async ({ findObject }) => {
+ 
+  consultar : async ({ findObject }) => {
     try {
-
-      //find query
-
-      let query2 = { "IdEmpresa": new mongo.ObjectID(findObject.IdEmpresa) };
-      let query = {};
-      if (findObject.search) {
-        query = { $or: [{ NombreCompleto: { $regex: ".*" + findObject.search.replace(new RegExp(' ', 'g'), '.*'), $options: "i" } }, { Identificacion: { $regex: ".*" + findObject.search.replace(new RegExp(' ', 'g'), '.*'), $options: "i" } }] }
-
+      // Construir el filtro para buscar por el campo Usuario
+      const query = { Usuario: { $regex: findObject.search, $options: 'i' } };
+  
+      // Buscar usuario en la base de datos
+      const usuarioEncontrado = await objModel.findOne(query, '_id Identificacion NombreCompleto');
+  
+      // Verificar si se encontró el usuario
+      if (!usuarioEncontrado) {
+        return {
+          status: constants.NOT_FOUND_ERROR_MESSAGE,
+          mensaje: "Usuario no encontrado",
+          datos: [],
+        };
       }
-
-      //find object
-      let response = await objModel.aggregate(
-        [
-          { $match: query2 },
-          { $match: query },
-          { $sort: { 'Nombre': 1 } }
-        ]
-      );
-
-      // .find(query,{ $or: [ { quantity: { $lt: 20 } }, { price: 10 } ] } ).sort({ 'NombreCompleto': 1 }).skip(Number(findObject.start) > 0 ? Number(findObject.start) : 0).limit(Number(findObject.length));
-
-      //set values
-      let status, failure_code, failure_message;
-
-      status = constants.SUCCEEDED_MESSAGE;
-
-      //return response
-      return {
-        status: status,
-        datos: response,
-        failure_code: failure_code,
-        failure_message: failure_message,
-      };
-
+  
+      const status = constants.SUCCEEDED_MESSAGE;
+      return { status, mensaje: "Usuario encontrado", datos: usuarioEncontrado };
     } catch (e2) {
-
       return {
         status: constants.INTERNAL_ERROR_MESSAGE,
+        mensaje: "Error al consultar usuario",
+        datos: [],
         failure_code: e2.code,
-        failure_message: e2.message
+        failure_message: e2.message,
       };
     }
   },

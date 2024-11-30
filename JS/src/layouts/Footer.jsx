@@ -32,7 +32,7 @@ const Footer = () => {
       <Stack direction={"row"} spacing={2} sx={{
       display: "flex"
     }}>
-        <Typography variant="subtitle2" color={"text.primary"}>
+        {/* <Typography variant="subtitle2" color={"text.primary"}>
           Acerca de
         </Typography>
         <Typography variant="subtitle2" color={"text.primary"}>
@@ -40,7 +40,7 @@ const Footer = () => {
         </Typography>
         <Typography variant="subtitle2" color={"text.primary"}>
           Contactenos
-        </Typography>
+        </Typography> */}
       </Stack>
     </FooterWrapper>;
 };

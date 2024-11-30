@@ -15,7 +15,6 @@ const UserProfile = () => {
 
   const info = JSON.parse(localStorage.getItem('userSession'));
   const userData = info.userData[0];
-  console.log("Info de usuario-->", userData);
 
   const selectedLanguage = country3;
   const {

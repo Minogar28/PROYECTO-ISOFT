@@ -19,7 +19,7 @@ module.exports = () => {
   const rolesController = require("./controllers/roles");
   const usuariosAdministrativosController = require("./controllers/usuariosAdministrativos");
   const proyectoController = require("./controllers/proyecto")
-
+  const tareasController = require("./controllers/tareas")
   // Aplica la validación JWT a todas las rutas debajo con authenticateJWT
   router.use('/interfaces', authenticateJWT);
 
@@ -38,7 +38,7 @@ requestsRouter.post(
  requestsRouter.post("/usuariosAdministrativos/actualizar",usuariosAdministrativosController.actualizar);
  requestsRouter.post("/usuariosAdministrativos/validarIngreso",usuariosAdministrativosController.validarIngreso);
  requestsRouter.get("/usuariosAdministrativos/listarPorIdentificacion/:value/:key",usuariosAdministrativosController.listarPorIdentificacion);
- requestsRouter.post("/usuariosAdministrativos/consultar",usuariosAdministrativosController.consultar);
+ requestsRouter.get("/usuariosAdministrativos/consultar",usuariosAdministrativosController.consultar);
  requestsRouter.post("/usuariosAdministrativos/listarUsuarioFuncionario",usuariosAdministrativosController.listarUsuarioFuncionario);
  requestsRouter.get("/usuariosAdministrativos/listarUnUsuarioAdministrativo/:value/:key",usuariosAdministrativosController.listarUnUsuario);
 
@@ -61,8 +61,16 @@ requestsRouter.post(
  requestsRouter.post("/proyecto/eliminar",proyectoController.eliminar);
  requestsRouter.post("/proyecto/actualizar",proyectoController.actualizar);
  requestsRouter.post("/proyecto/consultar",proyectoController.consultar);
+ requestsRouter.post("/proyecto/unirMiembro", proyectoController.añadirMiembro);
 
-   
+  //Tareas
+  requestsRouter.get("/tareas/listar",tareasController.listar);
+ requestsRouter.get("/tareas/:key/:value",tareasController.buscar);
+ requestsRouter.post("/tareas/insertar",tareasController.insertar);
+ requestsRouter.post("/tareas/eliminar",tareasController.eliminar);
+ requestsRouter.post("/tareas/actualizar",tareasController.actualizar);
+ requestsRouter.post("/tareas/consultar",tareasController.consultar);
+  
   //request
   router.use("/", indexRouter);
   router.use("/", requestsRouter);

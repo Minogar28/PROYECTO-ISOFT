@@ -163,6 +163,10 @@ const appsRoutes = [{
   element: <LoadComponent component={lazy(() => import("@src/pages/crearProyecto"))} />
 },
 {
+  path: "/tareas/mistareas",
+  element: <LoadComponent component={lazy(() => import("@src/pages/actividades"))} />
+},
+{
   path: "/proyectos/gestion",
   element: <LoadComponent component={lazy(() => import("@src/pages/Proyectos"))} />
 }, {

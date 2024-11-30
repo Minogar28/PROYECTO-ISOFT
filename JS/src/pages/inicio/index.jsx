@@ -10,7 +10,7 @@ const Inicio = () => {
   return (
     <>
       <PageBreadcrumb title="Inicio" subName="Páginas" />
-      <Box sx={{ p: 4, bgcolor: "background.default", minHeight: "60vh", color: "#fff" }}>
+      <Box sx={{ p: 4, bgcolor: "background.default", minHeight: "60vh",  }}>
         {/* Encabezado de Bienvenida */}
         <Box sx={{ textAlign: "center", mb: 4 }}>
           <Box display="flex" justifyContent="center" alignItems="center" mb={2}>

@@ -22,17 +22,37 @@ const MENU_ITEMS = [
   },
   {
     key: "proyectos",
-    label: "Proyectos",
+    label: "Gestionar",
     isTitle: false,
     icon: LuFolderClosed,
     children: [
       
       {
         key: "proyectos-listado",
-        label: "Gestión",
+        label: "Proyectos",
         url: "/proyectos/gestion",
         parentKey: "proyectos"
       }
+    ]
+  },
+  {
+    key: "actividades",
+    label: "Tareas",
+    isTitle: true
+  },
+  {
+    key: "actividades",
+    label: " Actividades",
+    isTitle: false,
+    icon: LuBriefcase,
+    children: [
+      {
+        key: "tareas",
+        label: "Mis Tareas",
+        url: "/tareas/mistareas",
+        parentKey: "actividades"
+      },
+     
     ]
   },
   {
@@ -60,6 +80,7 @@ const MENU_ITEMS = [
       // }
     ]
   },
+  
   // {
   //   key: "notificaciones",
   //   label: "Notificaciones",

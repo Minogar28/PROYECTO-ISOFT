@@ -45,11 +45,61 @@ const repo = {
       };
     }
   },
-
+  
+  añadirMiembro: async (nombreProyecto, codigoInvitacion, miembro) => {
+    try {
+      const filtro = {
+        $or: [
+          { nombreProyecto: nombreProyecto },
+          { codigoInvitacion: codigoInvitacion }
+        ]
+      };
+  
+      const proyecto = await objModel.findOne(filtro);
+      if (!proyecto) {
+        return {
+          status: constants.NOT_FOUND_ERROR_MESSAGE,
+          mensaje: "Proyecto no encontrado",
+          datos: [],
+        };
+      }
+  
+      // Verificar si el miembro ya existe en el equipo
+      const miembroExiste = proyecto.equipo.some((m) => m._id === miembro._id);
+      if (miembroExiste) {
+        return {
+          status: constants.FAILED_MESSAGE,
+          mensaje: "El miembro ya pertenece al equipo",
+          datos: [],
+        };
+      }
+  
+      // Agregar miembro al equipo
+      proyecto.equipo.push(miembro);
+      const response = await proyecto.save();
+  
+      return {
+        status: constants.SUCCEEDED_MESSAGE,
+        mensaje: "Miembro añadido correctamente",
+        datos: [response],
+      };
+    } catch (e2) {
+      return {
+        status: constants.INTERNAL_ERROR_MESSAGE,
+        mensaje: "Error al añadir miembro al equipo",
+        datos: [],
+        failure_code: e2.code,
+        failure_message: e2.message,
+      };
+    }
+  },
+  
   insertar: async (proyectoData) => {
     try {
       const fechaDeCreacion = new Date().toLocaleString(); // Fecha local al crear
-      const proyecto = { ...proyectoData, fechaDeCreacion };
+      const codigoInvitacion = `${proyectoData.nombreProyecto}-${uuidv1()}`; // Genera el código único
+
+      const proyecto = { ...proyectoData, fechaDeCreacion,codigoInvitacion };
       const response = await objModel.insertMany([proyecto]);
       const status = response.length > 0 ? constants.SUCCEEDED_MESSAGE : constants.FAILED_MESSAGE;
       return { status, mensaje: "Proyecto creado correctamente", datos: response };
@@ -84,8 +134,8 @@ const repo = {
 
   eliminar: async (proyectoData) => {
     try {
-      const filtro = { _id: proyectoData._id };
-      const response = await objModel.findOneAndRemove(filtro);
+      const filtro = { _id: proyectoData._id }; // Extraer el ID del objeto
+      const response = await objModel.findOneAndDelete(filtro);
       const status = response ? constants.SUCCEEDED_MESSAGE : constants.NOT_FOUND_ERROR_MESSAGE;
       const mensaje = response ? "Proyecto eliminado correctamente" : "Proyecto no encontrado";
       return { status, mensaje, datos: response ? [response] : [] };
@@ -98,7 +148,7 @@ const repo = {
         failure_message: e2.message,
       };
     }
-  },
+  },  
 
   consultar: async ({ findObject }) => {
     try {

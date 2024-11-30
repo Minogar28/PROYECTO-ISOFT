@@ -232,7 +232,7 @@ const Kanban = () => {
 
   return (
     <>
-      <PageBreadcrumb title="Kanban" subName="Aplicaciones" />
+      {/* <PageBreadcrumb title="Kanban" subName="Aplicaciones" /> */}
 
       <Box>
         <DragDropContext onDragEnd={onDragEnd}>

@@ -12,7 +12,8 @@ const proyectoSchema = schema({
  vista:String,
  IdAdmin: { type: schema.Types.ObjectId, ref: 'seguridad_usuariosAdministrativos' }, 
  equipo:[],
- objetivos:[]
+ objetivos:[],
+ codigoInvitacion:String
 });
 
 const proyectos = mongoose.model('proyecto', proyectoSchema);

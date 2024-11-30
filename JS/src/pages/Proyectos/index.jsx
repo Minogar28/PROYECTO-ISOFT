@@ -10,48 +10,60 @@ import {
   ListItemButton,
   Card,Grid,
   CardContent,
-  Avatar,
+  Avatar,IconButton
 } from "@mui/material";
 import { Folder, DateRange, Person, AddBox, Group } from "@mui/icons-material";
 import ProjectView from "./gestionProyectos";
 import { PageBreadcrumb } from "@src/components";
 import { useProyecto } from "./useProyecto";  // Importa el hook personalizado
+import {  Delete } from "@mui/icons-material";
 
-function ProjectList({ projects, onSelectProject }) {
+
+function ProjectList({ projects, onSelectProject, onDeleteProject }) {
   return (
     <List>
       {projects.map((project) => (
         <ListItem key={project._id} disablePadding sx={{ mb: 2 }}>
-          <ListItemButton onClick={() => onSelectProject(project)} sx={{ borderRadius: 2, boxShadow: 1, p: 2 }}>
-            <Avatar sx={{ bgcolor: "primary.main", mr: 2, width: 56, height: 56 }}>
-              <Folder fontSize="large" />
-            </Avatar>
-            <ListItemText
-              primary={
-                <Typography variant="h6" sx={{ fontWeight: "bold" }}>
-                  {project.nombreProyecto}
-                </Typography>
-              }
-              secondary={
-                <>
+          <Box sx={{ display: "flex", justifyContent: "space-between", width: "100%" }}>
+            <ListItemButton
+              onClick={() => onSelectProject(project)}
+              sx={{ borderRadius: 2, boxShadow: 1, p: 2, flexGrow: 1 }}
+            >
+              <Avatar sx={{ bgcolor: "primary.main", mr: 2, width: 56, height: 56 }}>
+                <Folder fontSize="large" />
+              </Avatar>
+              <ListItemText
+                primary={
+                  <Typography variant="h6" sx={{ fontWeight: "bold" }}>
+                    {project.nombreProyecto}
+                  </Typography>
+                }
+                secondary={
                   <Box display="flex" alignItems="center" mt={1}>
-                    <DateRange fontSize="small" sx={{ mr: 1, color: "text.secondary" }} />
                     <Typography variant="body2" color="text.secondary">
                       Fecha de creación: {project.fechaDeCreacion}
                     </Typography>
                   </Box>
-                </>
-              }
-            />
-          </ListItemButton>
+                }
+              />
+            </ListItemButton>
+            <IconButton
+            color="error"
+            onClick={() => onDeleteProject(project)} // Enviar el objeto completo
+            sx={{ alignSelf: "center", ml: 2 }}
+          >
+            <Delete />
+          </IconButton>
+          </Box>
         </ListItem>
       ))}
     </List>
   );
 }
 
+
 export default function Main() {
-  const { proyectos, loading, error, listarProyectos } = useProyecto();
+  const { proyectos, loading, error, listarProyectos,eliminarProyecto } = useProyecto();
   const [selectedProject, setSelectedProject] = useState(null);
   const [tabIndex, setTabIndex] = useState(0);
 
@@ -62,10 +74,23 @@ export default function Main() {
   const handleSelectProject = (project) => {
     setSelectedProject(project);
   };
+  const handleDeleteProject = async (proyecto) => {
+    try {
+      await eliminarProyecto(proyecto); // Enviar el objeto completo al eliminar
+    } catch (err) {
+      console.error("Error al eliminar el proyecto:", err.message);
+    }
+  };
 
   const handleTabChange = (event, newValue) => {
     setTabIndex(newValue);
   };
+ //INFO DE USUARIO EN SESION
+ const info = JSON.parse(localStorage.getItem('userSession'));
+ const userData = info.userData[0];
+ 
+  // Filtrar proyectos por usuario
+  const userProjects = proyectos.filter((project) => project.IdAdmin === userData._id);
 
   return (
     <Box>
@@ -91,7 +116,6 @@ export default function Main() {
                 }}
               >
                 <Tab icon={<AddBox />} label="Proyectos creados" />
-                <Tab icon={<Group />} label="Proyectos a los que perteneces" />
               </Tabs>
 
               {loading ? (
@@ -99,7 +123,8 @@ export default function Main() {
               ) : error ? (
                 <Typography align="center" color="error">Error: {error}</Typography>
               ) : (
-                <ProjectList projects={proyectos} onSelectProject={handleSelectProject} />
+                <ProjectList projects={userProjects} onSelectProject={handleSelectProject}                   onDeleteProject={handleDeleteProject} // Pasar la función de eliminar
+                />
               )}
             </CardContent>
           </Card>
