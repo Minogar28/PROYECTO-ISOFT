@@ -1,4 +1,4 @@
-import React from "react";
+import React,{ useRef } from "react";
 import {
   Box,
   Button,
@@ -10,88 +10,71 @@ import {
   TableHead,
   TableRow,
   Paper,
+  LinearProgress,
 } from "@mui/material";
 import { Assessment, CheckCircle, Error, HourglassEmpty, Person } from "@mui/icons-material";
 import ReactApexChart from "react-apexcharts";
+import InformePdf from "./informePdf"
+const Informes = ({ project, tasks }) => {
+  const chartRef = useRef();
+  const totalTareas = tasks.length;
+  const tareasCompletadas = tasks.filter((task) => task.estado === "Completadas").length;
+  const tareasPendientes = totalTareas - tareasCompletadas;
 
-const Informes = () => {
-  // Datos de las tareas
-  const rows = [
-    {
-      id: 1,
-      tarea: "Desarrollo Frontend",
-      asignado: "Juan Pérez",
-      estadoTarea: "Completado",
-      estadoProyecto: "En progreso",
-      fechaCreacion: "2024-11-10",
-      plazoEntrega: "2024-11-15",
-    },
-    {
-      id: 2,
-      tarea: "Integración API",
-      asignado: "Ana Gómez",
-      estadoTarea: "Pendiente",
-      estadoProyecto: "En progreso",
-      fechaCreacion: "2024-11-12",
-      plazoEntrega: "2024-11-20",
-    },
-    {
-      id: 3,
-      tarea: "Pruebas Unitarias",
-      asignado: "Carlos López",
-      estadoTarea: "En revisión",
-      estadoProyecto: "Completado",
-      fechaCreacion: "2024-11-15",
-      plazoEntrega: "2024-11-18",
-    },
-  ];
+  const estadoProyecto =
+    totalTareas > 0 ? (tareasCompletadas / totalTareas) * 100 : 0;
 
-  // Configuración de la gráfica basada en las tareas
-  const taskCompletionData = rows.map((row) => ({
-    x: row.plazoEntrega,
-    y: row.estadoTarea === "Completado" ? 1 : row.estadoTarea === "En revisión" ? 0.5 : 0,
-    name: row.tarea,
-  }));
+  const getEstadoProyecto = () => {
+    if (estadoProyecto > 90) return "Muy Bueno";
+    if (estadoProyecto > 80) return "Bueno";
+    if (estadoProyecto > 60) return "Regular";
+    return "En Retraso";
+  };
 
-  const taskChartOptions = {
+  const calcularEstadoTarea = (fechaFinalizacion) => {
+    const ahora = new Date();
+    const finalizacion = new Date(fechaFinalizacion);
+    const diferenciaHoras = (finalizacion - ahora) / (1000 * 60 * 60);
+
+    if (diferenciaHoras > 24) return "A tiempo";
+    if (diferenciaHoras > 0) return "Próximo a vencer";
+    return "Retrasada";
+  };
+
+  // Configuración del gráfico de barras apiladas
+  const chartOptions = {
     chart: {
-      type: "area",
-      stacked: false,
+      type: "bar",
+      stacked: true,
       height: 380,
-      zoom: { enabled: false },
     },
     series: [
       {
-        name: "Estado de Tareas",
-        data: taskCompletionData.map((item) => ({ x: item.x, y: item.y })),
+        name: "Completadas",
+        data: [tareasCompletadas],
+      },
+      {
+        name: "Pendientes",
+        data: [tareasPendientes],
       },
     ],
     xaxis: {
-      type: "datetime",
-      title: { text: "Plazo de Entrega" },
+      categories: ["Tareas"],
     },
     yaxis: {
-      title: { text: "Estado (0 = Pendiente, 0.5 = En revisión, 1 = Completado)" },
-      labels: {
-        formatter: (val) => (val === 1 ? "Completado" : val === 0.5 ? "En revisión" : "Pendiente"),
-      },
+      title: { text: "Cantidad de Tareas" },
     },
-    tooltip: {
-      x: { format: "dd/MM/yyyy" },
-      y: {
-        formatter: (val) => (val === 1 ? "Completado" : val === 0.5 ? "En revisión" : "Pendiente"),
-      },
-    },
-    title: { text: "Estado de Tareas por Fecha de Entrega", align: "left" },
+    colors: ["#4caf50", "#f44336"], // Colores para completadas y pendientes
+    title: { text: "Estado de Tareas", align: "center" },
   };
 
   const renderEstadoIcono = (estado) => {
     switch (estado) {
-      case "Completado":
+      case "Completadas":
         return <CheckCircle color="success" />;
       case "Pendiente":
         return <HourglassEmpty color="warning" />;
-      case "En revisión":
+      case "Por Hacer":
         return <Error color="error" />;
       default:
         return null;
@@ -100,36 +83,44 @@ const Informes = () => {
 
   return (
     <Box sx={{ p: 4 }}>
-      {/* Botón para generar informe */}
+      {/* Encabezado de métricas */}
       <Box sx={{ display: "flex", justifyContent: "space-between", mb: 4 }}>
         <Typography variant="h4" sx={{ fontWeight: "bold", color: "primary.main" }}>
-          Informes del Proyecto
+          Estado proyecto: {getEstadoProyecto()}
         </Typography>
-        <Button
-          variant="contained"
-          color="primary"
-          startIcon={<Assessment />}
-          onClick={() => console.log("Generar informe")}
-        >
-          Generar Informe
-        </Button>
+        <InformePdf project={project} tasks={tasks} chartRef={chartRef}/>
       </Box>
 
-      {/* Gráfica de estado de tareas */}
+      {/* Barra de carga */}
       <Box sx={{ mb: 4 }}>
         <Typography variant="h6" sx={{ mb: 2 }}>
-          Gráfica de estado de tareas
+          Nivel de avance de proyecto
         </Typography>
+        <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
+          <LinearProgress
+            variant="determinate"
+            value={estadoProyecto}
+            sx={{ flexGrow: 1, height: 10, borderRadius: 5 }}
+          />
+          <Typography variant="body1" sx={{ fontWeight: "bold" }}>
+            {Math.round(estadoProyecto)}%
+          </Typography>
+        </Box>
+      </Box>
+
+      {/* Gráfico de barras */}
+      <Box ref={chartRef}sx={{ mb: 4 }}>
+       
         <ReactApexChart
           className="apex-charts"
-          options={taskChartOptions}
+          options={chartOptions}
+          series={chartOptions.series}
+          type="bar"
           height={380}
-          series={taskChartOptions.series}
-          type="area"
         />
       </Box>
 
-      {/* Tabla con estados de tareas y proyectos */}
+      {/* Tabla con estados de tareas */}
       <TableContainer component={Paper} sx={{ mb: 4 }}>
         <Table>
           <TableHead>
@@ -144,30 +135,45 @@ const Informes = () => {
                 Estado de la Tarea
               </TableCell>
               <TableCell align="center" sx={{ fontWeight: "bold" }}>
-                Estado del Proyecto
-              </TableCell>
-              <TableCell align="center" sx={{ fontWeight: "bold" }}>
                 Fecha de Creación
               </TableCell>
               <TableCell align="center" sx={{ fontWeight: "bold" }}>
                 Plazo de Entrega
               </TableCell>
+              <TableCell align="center" sx={{ fontWeight: "bold" }}>
+                Estado Actual
+              </TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
-            {rows.map((row) => (
-              <TableRow key={row.id}>
-                <TableCell align="center">{row.tarea}</TableCell>
+            {tasks.map((task) => (
+              <TableRow key={task._id.$oid}>
+                <TableCell align="center">{task.nombreTarea}</TableCell>
                 <TableCell align="center">
-                  <Box sx={{ display: "flex", alignItems: "center", gap: 1, justifyContent: "center" }}>
+                  <Box
+                    sx={{
+                      display: "flex",
+                      alignItems: "center",
+                      gap: 1,
+                      justifyContent: "center",
+                    }}
+                  >
                     <Person color="primary" />
-                    {row.asignado}
+                    {task.asignados
+                      .map((asignado) => asignado.NombreCompleto)
+                      .join(", ")}
                   </Box>
                 </TableCell>
-                <TableCell align="center">{renderEstadoIcono(row.estadoTarea)}</TableCell>
-                <TableCell align="center">{row.estadoProyecto}</TableCell>
-                <TableCell align="center">{row.fechaCreacion}</TableCell>
-                <TableCell align="center">{row.plazoEntrega}</TableCell>
+                <TableCell align="center">{renderEstadoIcono(task.estado)}</TableCell>
+                <TableCell align="center">
+                  {new Date(task.fechaDeCreacion).toLocaleDateString()}
+                </TableCell>
+                <TableCell align="center">
+                  {new Date(task.fechaFinalizacion).toLocaleDateString()}
+                </TableCell>
+                <TableCell align="center">
+                  {calcularEstadoTarea(task.fechaFinalizacion)}
+                </TableCell>
               </TableRow>
             ))}
           </TableBody>

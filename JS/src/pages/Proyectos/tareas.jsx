@@ -1,63 +1,77 @@
 import React, { useState, useEffect } from "react";
 import {
+  Dialog,
+  DialogContent,
+  DialogTitle,
+  TextField,
+  Grid,
+  Autocomplete,
+  IconButton,
+  MenuItem,
+  Accordion,
+  AccordionDetails,
+  AccordionSummary,
   Box,
   Button,
-  Modal,
-  TextField,
   Typography,
-  Card,
-  CardContent,
-  MenuItem,
-  Select,
-  InputLabel,
-  FormControl,
-  Checkbox,
-  Collapse,
+  Chip,
+  Stack,
 } from "@mui/material";
-import { Add } from "@mui/icons-material";
-import { LuCalendar, LuChevronDown } from "react-icons/lu";
-import { useProyecto } from "./useProyecto";
+import { LuX } from "react-icons/lu";
+import useProyecto from "@src/hooks/useProyecto.js";
+import { ExpandMore, Delete, Add } from "@mui/icons-material";
+
+import { Assignment, PriorityHigh, CalendarToday, People } from "@mui/icons-material";
 
 function Tareas({ colaboradores, IdProyecto }) {
-  const [taskSectionOpen, setTaskSectionOpen] = useState(true);
   const [newTask, setNewTask] = useState({
     nombreTarea: "",
     descripcion: "",
     prioridad: "Baja",
     fechaFinalizacion: "",
-    asignados: "",
+    asignados: [],
+    estado: "",
   });
   const [openModal, setOpenModal] = useState(false);
 
-  const { tareas, listarTareas, agregarTarea } = useProyecto(); // Hook para interactuar con la API
+  const { tareas, listarTareas, agregarTarea, actualizarTarea } = useProyecto();
 
-  // Cargar las tareas al montar el componente
   useEffect(() => {
     listarTareas();
   }, [listarTareas]);
 
-  // Filtrar las tareas por IdProyecto
   const filteredTasks = tareas.filter((task) => task.IdProyecto === IdProyecto);
+  // const handleRemoveAsignado = async (taskId, asignadoId) => {
+  //   try {
+  //     const updatedTask = await actualizarTarea({
+  //       taskId,
+  //       asignados: filteredTasks
+  //         .find((task) => task._id.$oid === taskId)
+  //         .asignados.filter((a) => a._id !== asignadoId),
+  //     });
+  //     listarTareas(); // Refresca la lista de tareas
+  //   } catch (error) {
+  //     console.error("Error al eliminar asignado:", error);
+  //   }
+  // };
 
-  const handleAddTask = async () => {
+  const handleAddTask = async (e) => {
+    e.preventDefault();
     if (newTask.nombreTarea && newTask.fechaFinalizacion && newTask.asignados) {
       try {
-        // Llamamos a la API para agregar la tarea
-        const tareaCreada = await agregarTarea({
+        await agregarTarea({
           ...newTask,
-          IdProyecto, // Pasamos el ID del proyecto
-          estado: "Pendiente",
+          IdProyecto,
           fechaDeCreacion: new Date().toISOString(),
         });
 
-        // Actualizamos la lista local de tareas llamando a `listarTareas`
         listarTareas();
         setNewTask({
           nombreTarea: "",
           descripcion: "",
           prioridad: "Baja",
           fechaFinalizacion: "",
-          asignados: "",
+          asignados: [],
         });
         setOpenModal(false);
       } catch (error) {
@@ -66,158 +80,322 @@ function Tareas({ colaboradores, IdProyecto }) {
     }
   };
 
-  const Task = ({ task }) => (
-    <Box
-      key={task._id.$oid}
-      sx={{
-        display: "grid",
-        gridTemplateColumns: "repeat(2, minmax(0, 1fr))",
-        gap: "16px",
-        mb: 2,
-      }}
-    >
-      <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-        <Checkbox id={`task-${task._id.$oid}`} />
-        <Typography component="label" htmlFor={`task-${task._id.$oid}`} sx={{ fontWeight: 500 }}>
-          {task.nombreTarea}
-        </Typography>
-      </Box>
-      <Box sx={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-        <Typography sx={{ fontWeight: 500 }}>
-          {task.asignados && task.asignados.length > 0 ? task.asignados.join(", ") : "No asignados"}
-        </Typography>
-        <Typography sx={{ display: "flex", alignItems: "center" }}>
-          <LuCalendar size={16} style={{ marginRight: "6px" }} />
-          {task.fechaFinalizacion}
-        </Typography>
-      </Box>
-    </Box>
-  );
+  const handleNewTaskChange = (e) => {
+    const { name, value } = e.target;
+    setNewTask((prev) => ({ ...prev, [name]: value }));
+  };
 
   return (
     <>
-      <Box sx={{ mb: 4 }}>
-        {/* Botón para agregar tarea */}
-        <Box display="flex" justifyContent="flex-start" alignItems="center" mb={2}>
+
+      <Box sx={{ mb: 2 }}>
+        {/* Header */}
+        <Box
+          sx={{
+            display: "flex",
+            flexWrap: "wrap", // Permitir que los elementos se apilen en pantallas pequeñas
+            justifyContent: "space-between",
+            alignItems: "center",
+            mb: 3,
+            gap: 2, // Espaciado entre elementos
+          }}
+        >
+          <Typography
+            variant="h6"
+            sx={{
+              fontWeight: "bold",
+              color: "primary.main",
+              display: "flex",
+              alignItems: "center",
+              gap: 1,
+            }}
+          >
+            <Assignment fontSize="large" />
+            Tareas del Proyecto
+          </Typography>
           <Button
             variant="contained"
             color="primary"
             startIcon={<Add />}
             onClick={() => setOpenModal(true)}
+            sx={{
+              textTransform: "none",
+              px: 3,
+              py: 1,
+              fontSize: "1rem",
+              fontWeight: "bold",
+              "&:hover": {
+                backgroundColor: "primary.dark",
+                boxShadow: "0px 6px 16px rgba(0, 0, 0, 0.3)",
+              },
+            }}
           >
-            Agregar tarea
+            Nueva tarea
           </Button>
         </Box>
 
-        {/* Lista de tareas */}
-        <Card sx={{ borderRadius: 2, boxShadow: 3 }}>
-          <CardContent>
-            <Typography
-              variant="h6"
-              sx={{ fontWeight: "bold", mb: 3, textAlign: "center", color: "primary.main" }}
+        {/* Task List */}
+        <Box>
+          {filteredTasks.map((task, index) => (
+            <Accordion
+              key={index}
+              sx={{
+                mb: 1,
+                border: "none", // Elimina cualquier borde
+                "&:before": {
+                  display: "none", // Elimina la línea divisoria por defecto de Material-UI
+                },
+                borderRadius: "20px",
+              }}
             >
-              Tareas del Proyecto
-            </Typography>
-
-            <Typography
-              onClick={() => setTaskSectionOpen(!taskSectionOpen)}
-              sx={{ mb: 2, cursor: "pointer", fontWeight: 500 }}
-            >
-              <LuChevronDown
-                style={{
-                  marginRight: "8px",
-                  transform: taskSectionOpen ? "rotate(0deg)" : "rotate(-90deg)",
+              <AccordionSummary
+                expandIcon={<ExpandMore />}
+                sx={{
+                  bgcolor: "primary",
+                  borderRadius: "20px",
                 }}
-              />
-              Lista de Tareas ({filteredTasks.length})
-            </Typography>
-            <Collapse in={taskSectionOpen}>
-              <Card sx={{ p: 2 }}>
-                {filteredTasks.map((task) => (
-                  <Task key={task._id.$oid} task={task} />
-                ))}
-              </Card>
-            </Collapse>
-          </CardContent>
-        </Card>
+              >
+                <Stack
+                  direction={{
+                    xs: "column", // Apilado en pantallas pequeñas
+                    sm: "row", // Horizontal en pantallas medianas y grandes
+                  }}
+                  alignItems="center"
+                  justifyContent="space-between"
+                  sx={{ width: "100%", gap: { xs: 1, sm: 2 } }}
+                >
+                  <Typography
+                    variant="body1"
+                    sx={{
+                      fontWeight: "bold",
+                      display: "flex",
+                      alignItems: "center",
+                      gap: 1,
+                    }}
+                  >
+                    <Assignment fontSize="small" />
+                    {task.nombreTarea}
+                  </Typography>
+                  <Box
+                    sx={{
+                      display: "flex",
+                      gap: { xs: 1, sm: 2 },
+                      alignItems: "center",
+                      flexWrap: "wrap", // Permitir ajuste en pantallas pequeñas
+                    }}
+                  >
+                    <Typography
+                      variant="body2"
+                      sx={{
+                        display: "flex",
+                        alignItems: "center",
+                        gap: 1,
+                        fontStyle: "italic",
+                        color: "grey.700",
+                      }}
+                    >
+                      <CalendarToday fontSize="small" />
+                      {new Date(task.fechaDeCreacion).toLocaleDateString()}
+                    </Typography>
+                    <Chip
+                      icon={<PriorityHigh />}
+                      label={` ${task.prioridad}`}
+                      color={
+                        task.prioridad === "Alta"
+                          ? "error"
+                          : task.prioridad === "Media"
+                            ? "warning"
+                            : "success"
+                      }
+                      size="small"
+                    />
+                  </Box>
+                </Stack>
+              </AccordionSummary>
+              <AccordionDetails>
+                <Box sx={{ p: 2 }}>
+                  <Typography
+                    variant="subtitle1"
+                    sx={{
+                      fontWeight: "bold",
+                      display: "flex",
+                      alignItems: "center",
+                      gap: 1,
+                    }}
+                  >
+                    <People />
+                    Asignados:
+                  </Typography>
+                  <Box>
+                    {task.asignados.map((asignado) => (
+                      <Stack
+                        key={asignado._id}
+                        direction="row"
+                        alignItems="center"
+                        justifyContent="space-between"
+                        sx={{
+                          border: "1px solid #ddd",
+                          borderRadius: "8px",
+                          p: 1,
+                          mb: 1,
+                          boxShadow: "0px 2px 6px rgba(0, 0, 0, 0.1)",
+                        }}
+                      >
+                        <Typography variant="body2">
+                          {asignado.NombreCompleto} - {asignado.rol} ({asignado.permiso})
+                        </Typography>
+                      </Stack>
+                    ))}
+                  </Box>
+                  <Typography
+                    variant="subtitle1"
+                    sx={{
+                      fontWeight: "bold",
+                      mt: 2,
+                      display: "flex",
+                      alignItems: "center",
+                      gap: 1,
+                    }}
+                  >
+                    <Assignment />
+                    Descripción:
+                  </Typography>
+                  <Typography variant="body2">{task.descripcion || "N/A"}</Typography>
+                </Box>
+              </AccordionDetails>
+            </Accordion>
+          ))}
+        </Box>
       </Box>
 
-      {/* Modal para agregar tarea */}
-      <Modal open={openModal} onClose={() => setOpenModal(false)} aria-labelledby="add-task-modal">
-        <Box
+
+      <Dialog open={openModal} onClose={() => setOpenModal(false)} maxWidth={"md"} fullWidth>
+        <DialogTitle
           sx={{
-            position: "absolute",
-            top: "50%",
-            left: "50%",
-            transform: "translate(-50%, -50%)",
-            bgcolor: "background.paper",
-            boxShadow: 24,
-            p: 4,
-            borderRadius: 2,
-            width: "90%",
-            maxWidth: 500,
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
           }}
         >
-          <Typography id="add-task-modal" variant="h6" sx={{ mb: 3, textAlign: "center" }}>
-            Agregar Nueva Tarea
-          </Typography>
-          <TextField
-            fullWidth
-            label="Nombre de la tarea"
-            variant="outlined"
-            value={newTask.nombreTarea}
-            onChange={(e) => setNewTask({ ...newTask, nombreTarea: e.target.value })}
-            sx={{ mb: 2 }}
-          />
-          <TextField
-            fullWidth
-            label="Descripción"
-            multiline
-            rows={3}
-            variant="outlined"
-            value={newTask.descripcion}
-            onChange={(e) => setNewTask({ ...newTask, descripcion: e.target.value })}
-            sx={{ mb: 2 }}
-          />
-          <FormControl fullWidth sx={{ mb: 2 }}>
-            <InputLabel>Prioridad</InputLabel>
-            <Select
-              value={newTask.prioridad}
-              onChange={(e) => setNewTask({ ...newTask, prioridad: e.target.value })}
+          <Typography variant="h5">Crear Nueva Tarea</Typography>
+          <IconButton onClick={() => setOpenModal(false)}>
+            <LuX />
+          </IconButton>
+        </DialogTitle>
+        <DialogContent sx={{ overflowY: "auto" }} dividers>
+          <form onSubmit={handleAddTask}>
+            <Grid container spacing={2} sx={{ my: 1 }}>
+              <Grid item xs={12}>
+                <TextField
+                  fullWidth
+                  label="Nombre de la Tarea"
+                  name="nombreTarea"
+                  value={newTask.nombreTarea}
+                  onChange={handleNewTaskChange}
+                />
+              </Grid>
+              <Grid item xs={12}>
+                <TextField
+                  fullWidth
+                  label="Descripción"
+                  name="descripcion"
+                  value={newTask.descripcion}
+                  onChange={handleNewTaskChange}
+                  multiline
+                  rows={3}
+                />
+              </Grid>
+              <Grid item xs={6}>
+                <TextField
+                  select
+                  fullWidth
+                  label="Prioridad"
+                  name="prioridad"
+                  value={newTask.prioridad}
+                  onChange={handleNewTaskChange}
+                >
+                  <MenuItem value="Alta">Alta</MenuItem>
+                  <MenuItem value="Media">Media</MenuItem>
+                  <MenuItem value="Baja">Baja</MenuItem>
+                </TextField>
+              </Grid>
+              <Grid item xs={6}>
+                <Autocomplete
+                  multiple
+                  options={colaboradores}
+                  getOptionLabel={(option) => option.NombreCompleto}
+                  value={newTask.asignados}
+                  onChange={(event, newValue) =>
+                    setNewTask((prev) => ({ ...prev, asignados: newValue }))
+                  }
+                  renderInput={(params) => (
+                    <TextField
+                      {...params}
+                      label="Asignar a"
+                      placeholder="Seleccionar usuarios"
+                    />
+                  )}
+                />
+              </Grid>
+              <Grid item xs={6}>
+                <TextField
+                  fullWidth
+                  type="date"
+                  label="Fecha de Finalización"
+                  name="fechaFinalizacion"
+                  value={newTask.fechaFinalizacion}
+                  onChange={handleNewTaskChange}
+                  InputLabelProps={{ shrink: true }}
+                />
+              </Grid>
+              <Grid item xs={6}>
+                <TextField
+                  select
+                  fullWidth
+                  label="Estado"
+                  name="estado"
+                  value={newTask.estado}
+                  onChange={handleNewTaskChange}
+                >
+                  <MenuItem value="Por Hacer">Por Hacer</MenuItem>
+                  <MenuItem value="En Desarrollo">En Desarrollo</MenuItem>
+                  <MenuItem value="En Prueba">En Prueba</MenuItem>
+                  <MenuItem value="Completadas">Completadas</MenuItem>
+                </TextField>
+              </Grid>
+            </Grid>
+            <Box
+              sx={{
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+                mt: 3,
+              }}
             >
-              <MenuItem value="Baja">Baja</MenuItem>
-              <MenuItem value="Media">Media</MenuItem>
-              <MenuItem value="Alta">Alta</MenuItem>
-            </Select>
-          </FormControl>
-          <TextField
-            fullWidth
-            label="Fecha de finalización"
-            type="date"
-            variant="outlined"
-            InputLabelProps={{ shrink: true }}
-            value={newTask.fechaFinalizacion}
-            onChange={(e) => setNewTask({ ...newTask, fechaFinalizacion: e.target.value })}
-            sx={{ mb: 2 }}
-          />
-       <FormControl fullWidth sx={{ mb: 3 }}>
-          <InputLabel>Asignado a</InputLabel>
-          <Select
-            value={newTask.asignados}
-            onChange={(e) => setNewTask({ ...newTask, asignados: e.target.value })}
-          >
-            {colaboradores.map((colaborador, index) => (
-              <MenuItem key={index} value={colaborador._id}>
-                {colaborador.NombreCompleto}
-              </MenuItem>
-            ))}
-          </Select>
-        </FormControl>
-          <Button fullWidth variant="contained" color="primary" onClick={handleAddTask}>
-            Guardar
-          </Button>
-        </Box>
-      </Modal>
+              <Button
+                variant="contained"
+                color="success"
+                type="submit"
+                sx={{
+                  px: 4,
+                  py: 1.5,
+                  fontSize: "1rem",
+                  fontWeight: "bold",
+                  borderRadius: "8px",
+                  textTransform: "none",
+                  boxShadow: "0px 4px 12px rgba(0, 0, 0, 0.2)",
+                  "&:hover": {
+                    backgroundColor: "primary.dark",
+                    boxShadow: "0px 6px 16px rgba(0, 0, 0, 0.3)",
+                  },
+                }}
+              >
+                Guardar
+              </Button>
+            </Box>
+          </form>
+        </DialogContent>
+      </Dialog>
     </>
   );
 }

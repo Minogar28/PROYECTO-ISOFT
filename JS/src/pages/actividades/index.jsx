@@ -15,8 +15,8 @@ import {
   TextField,
 } from "@mui/material";
 import { Folder, Add } from "@mui/icons-material";
-import { useProyecto } from "./usehook"; // Hook personalizado
-import Tablero from "./Kanban"; // Importa el componente Kanban
+import { useProyecto } from "../../hooks/usehook"; // Hook personalizado
+import Tablero from "./vistaTareas"; // Importa el componente Kanban
 import { PageBreadcrumb } from "@src/components";
 
 // Componente para listar proyectos
@@ -25,30 +25,50 @@ function ProjectList({ projects, onViewTasks }) {
     <List>
       {projects.map((project) => (
         <ListItem key={project._id} disablePadding sx={{ mb: 2 }}>
-          <Box sx={{ display: "flex", justifyContent: "space-between", width: "100%" }}>
+          <Box sx={{
+            display: "flex",
+            flexDirection: { xs: "column", md: "row" },
+            justifyContent: "space-between",
+            alignItems: { xs: "flex-start", md: "center" },
+            width: "100%",
+            gap: 2,
+          }}>
             <ListItemButton
-              sx={{ borderRadius: 2, boxShadow: 1, p: 2, flexGrow: 1 }}
+              sx={{
+                borderRadius: 2,
+                boxShadow: 1,
+                p: 2,
+                flexGrow: 1,
+                flexDirection: { xs: "column", md: "row" },
+                alignItems: { xs: "flex-start", md: "center" },
+                gap: 2,
+              }}
             >
-              <Avatar sx={{ bgcolor: "primary.main", mr: 2, width: 56, height: 56 }}>
+              <Avatar sx={{ bgcolor: "primary.main", mr: 1, width: 46, height: 46 }}>
                 <Folder fontSize="large" />
               </Avatar>
-              <ListItemText
-                primary={
-                  <Typography variant="h6" sx={{ fontWeight: "bold" }}>
-                    {project.nombreProyecto}
-                  </Typography>
-                }
-                secondary={
-                  <Typography variant="body2" color="text.secondary">
-                    Fecha de creación: {project.fechaDeCreacion}
-                  </Typography>
-                }
-              />
+              <Box sx={{ flexGrow: 1 }}>
+                <ListItemText
+                  primary={
+                    <Typography variant="h6" sx={{ fontWeight: "bold" }}>
+                      {project.nombreProyecto}
+                    </Typography>
+                  }
+                  secondary={
+                    <Typography variant="body2" color="text.secondary">
+                      Fecha de creación: {project.fechaDeCreacion}
+                    </Typography>
+                  }
+                />
+              </Box>
               <Button
                 variant="contained"
                 color="secondary"
                 onClick={() => onViewTasks(project)} // Llama la función al hacer clic
-                sx={{ alignSelf: "center", ml: 2 }}
+                sx={{
+                  alignSelf: { xs: "flex-start", md: "center" },
+                  mt: { xs: 2, md: 0 },
+                }}
               >
                 Ver Tareas
               </Button>
@@ -61,7 +81,7 @@ function ProjectList({ projects, onViewTasks }) {
 }
 
 export default function TareasIndex() {
-  const { proyectos, loading, error, listarProyectos, añadirMiembro } = useProyecto(); // Hook para gestionar proyectos
+  const { proyectos, loading, error, listarPorMiembro, añadirMiembro } = useProyecto(); // Hook para gestionar proyectos
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedProject, setSelectedProject] = useState(null); // Estado para manejar el proyecto seleccionado
   const info = JSON.parse(localStorage.getItem("userSession"));
@@ -78,9 +98,10 @@ export default function TareasIndex() {
     permiso: "Solo Ver",
   });
 
+  // Cargar proyectos por miembro al montar el componente
   useEffect(() => {
-    listarProyectos(); // Cargar proyectos al montar el componente
-  }, []);
+    listarPorMiembro(userData._id);
+  }, [userData._id]);
 
   const handleJoinProject = () => {
     setIsModalOpen(true);
@@ -101,7 +122,7 @@ export default function TareasIndex() {
       handleCloseModal();
       await añadirMiembro(nombreProyecto, invitacion, miembro); // Llamar la función del hook
 
-      listarProyectos(); // Actualizar la lista de proyectos después de unirse
+      listarPorMiembro(userData._id); // Actualizar la lista de proyectos después de unirse
     } catch (error) {
       console.error("Error al unirse al proyecto:", error.message);
     }
@@ -116,27 +137,34 @@ export default function TareasIndex() {
   };
 
   return (
-    
-    <Box>
-            <PageBreadcrumb title="Mis tareas" subName="Actividades" />
+    <>
+      <PageBreadcrumb title="Mis tareas" subName="Actividades" />
 
       {selectedProject ? (
         // Mostrar el componente Kanban (Tablero)
         <Tablero project={selectedProject} onBack={handleBackToProjects} />
       ) : (
         <Grid
-          sx={{
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-            minHeight: "80vh",
-            p: 3,
-          }}
+          container
+          justifyContent="center"
+          alignItems="center"
+          sx={{ minHeight: "60vh", p: 3 }}
         >
-          <Card sx={{ width: "100%", borderRadius: 4, boxShadow: 5, p: 3 }}>
-            <CardContent>
+          <Card sx={{ width: "100%", borderRadius: 4 }}>
+            <CardContent sx={{
+              width: "100%",
+              padding: "16px", // Puedes ajustar el padding del contenido
+              boxSizing: "border-box",
+            }}>
               <Box
-                sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", mb: 3 }}
+                sx={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                  mb: 3,
+                  flexDirection: { xs: "column", md: "row" },
+                  gap: 2,
+                }}
               >
                 <Typography variant="h6" sx={{ fontWeight: "bold" }}>
                   Proyectos
@@ -212,6 +240,6 @@ export default function TareasIndex() {
           </Box>
         </Box>
       </Modal>
-    </Box>
+    </>
   );
 }

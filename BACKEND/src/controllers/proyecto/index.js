@@ -5,6 +5,7 @@ const actualizar = require('./actualizar');
 const eliminar = require('./eliminar');
 const consultar = require('./consultar')
 const añadirMiembro = require('./añadirMiembro')
+const listarPorMiembro = require('./listarPorMiembro')
 module.exports = {
   listar,
   buscar,
@@ -12,5 +13,6 @@ module.exports = {
   actualizar,
   eliminar,
   consultar,
-  añadirMiembro
+  añadirMiembro,
+  listarPorMiembro
 }

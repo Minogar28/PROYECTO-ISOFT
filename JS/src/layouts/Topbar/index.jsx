@@ -93,7 +93,7 @@ const Topbar = () => {
           gap: 1.5
         }}>
             {/* <LanguageDropdown /> */}
-            <NotificationsDropdown notifications={notifications} />
+            {/* <NotificationsDropdown notifications={notifications} /> */}
             {/* <AppsDropdown /> */}
           </Box>
         </Box>

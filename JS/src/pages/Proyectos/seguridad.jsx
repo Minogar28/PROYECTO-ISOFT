@@ -14,7 +14,7 @@ import {
 } from "@mui/material";
 import { DataGrid, GridActionsCellItem } from "@mui/x-data-grid";
 import { Delete, Add } from "@mui/icons-material";
-import { useProyecto } from "./useProyecto";
+import  useProyecto  from "@src/hooks/useProyecto.js";
 import Swal from "sweetalert2";
 
 
@@ -142,7 +142,7 @@ function Equipo({ proyecto }) {
                         }}
                     >
                         <Typography variant="h6" sx={{ fontWeight: "bold" }}>
-                            Miembros del Equipo
+                            Colaboradores
                         </Typography>
                         <Button
                             variant="contained"

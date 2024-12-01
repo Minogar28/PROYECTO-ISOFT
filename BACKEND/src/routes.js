@@ -62,6 +62,7 @@ requestsRouter.post(
  requestsRouter.post("/proyecto/actualizar",proyectoController.actualizar);
  requestsRouter.post("/proyecto/consultar",proyectoController.consultar);
  requestsRouter.post("/proyecto/unirMiembro", proyectoController.añadirMiembro);
+ requestsRouter.post("/proyecto/listarPorMiembro", proyectoController.listarPorMiembro);
 
   //Tareas
   requestsRouter.get("/tareas/listar",tareasController.listar);

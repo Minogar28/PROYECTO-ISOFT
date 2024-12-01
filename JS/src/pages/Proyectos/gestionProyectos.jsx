@@ -1,32 +1,26 @@
 import {
-  Add,
-  CalendarToday,
   Chat,
   Dashboard,
   Timeline,
   ViewList,
-  Work, Group,
-  Assignment,
+  Work
 } from "@mui/icons-material";
 import {
   AppBar,
   Box,
-  Button,
   Grid,
-  List, ListItem, ListItemText,
-  Modal,
   Tab,
   Tabs,
-  TextField,
-  Typography, Avatar
+  Typography
 } from "@mui/material";
-import React, { useState } from "react";
-import Calendario from "../apps/Calendar";
-import Kanban from "../apps/Kanban";
-import Informes from "./informes";
+import React, { useState, useEffect, useCallback } from "react";
 import ProjectDetails from "./detallesProyecto"; // Importar el nuevo componente
+import Informes from "./informes";
+import Seguridad from "./seguridad";
+import Kanban from "./tablero";
 import Tareas from "./tareas";
-import Seguridad from "./seguridad"
+import useProyecto from "@src/hooks/useProyecto.js";
+
 function TabPanel(props) {
   const { children, value, index, ...other } = props;
   return (
@@ -48,11 +42,29 @@ function TabPanel(props) {
 
 function ProjectView({ project }) {
   const [value, setValue] = useState(0);
-  const [tasks, setTasks] = useState([
-    { id: 1, title: "Establecer el objetivo del proyecto", due_date: "2024-11-20", priority: "High", checklists: [], assignee_avatar: "" },
-    { id: 2, title: "Programar una reunión inicial", due_date: "2024-11-22", priority: "Medium", checklists: [], assignee_avatar: "" },
-  ]);
-  const colaboradores = ["Juan Pérez", "Ana Gómez", "Carlos López"];
+
+  const { tareas, listarTareas, agregarTarea, actualizarTarea } = useProyecto();
+  const [tareasFiltradas, setTareasFiltradas] = useState([]);
+  const [tareasCargadas, setTareasCargadas] = useState(false);
+
+  useEffect(() => {
+    if (!tareasCargadas) {
+      listarTareas().then(() => {
+        setTareasCargadas(true); // Marcar las tareas como cargadas
+      });
+    }
+  }, [tareasCargadas, listarTareas]);
+
+  // Filtrar las tareas correspondientes al proyecto
+  useEffect(() => {
+    if (tareas.length > 0) {
+      const filtradas = tareas.filter(
+        (task) => task.IdProyecto === project._id
+      );
+      setTareasFiltradas(filtradas);
+    }
+  }, [tareas, project._id]);
+
 
   const [newTask, setNewTask] = useState({ title: "", due_date: "", priority: "Low" });
   const handleTabChange = (event, newValue) => {
@@ -60,19 +72,12 @@ function ProjectView({ project }) {
   };
   const [openModal, setOpenModal] = useState(false);
 
-  const handleAddTask = () => {
-    if (newTask.title && newTask.due_date) {
-      setTasks([...tasks, { ...newTask, id: tasks.length + 1, checklists: [], assignee_avatar: "" }]);
-      setNewTask({ title: "", due_date: "", priority: "Low" });
-      setOpenModal(false);
-    }
-  };
 
 
   return (
     <>
       <Grid sx={{ flexGrow: 1, p: 3, maxWidth: "100%", margin: "auto" }}>
-        <Typography variant="h4" align="center" gutterBottom sx={{ mb: 4, fontWeight: "bold" }}>
+        <Typography variant="h1" align="center" gutterBottom sx={{ mb: 4, fontWeight: "bold" }}>
           {project.nombreProyecto}
         </Typography>
 
@@ -90,32 +95,27 @@ function ProjectView({ project }) {
               <Tab icon={<Dashboard />} label="Tablero" />
               <Tab icon={<Timeline />} label="Informes" />
               <Tab icon={<Work />} label="Detalles del proyecto" />
-              <Tab icon={<CalendarToday />} label="Calendario" />
-              {/* <Tab icon={<Assignment />} label="Flujo de trabajo" /> */}
-              {/* <Tab icon={<Chat />} label="Mensajes" /> */}
               <Tab icon={<Chat />} label="Seguridad" />
 
             </Tabs>
           </AppBar>
 
           <TabPanel value={value} index={0}>
-            {console.log("pro", project)}
 
             <Tareas
-              tasks={tasks}
-              setTasks={setTasks}
               colaboradores={project.equipo} // Lista de colaboradores del proyecto
               IdProyecto={project._id} // ID del proyecto
             />
-
           </TabPanel>
 
           <TabPanel value={value} index={1}>
-            <Kanban />
+            <Kanban project={project} />
           </TabPanel>
 
           <TabPanel value={value} index={2}>
-            <Informes />
+            {console.log("AAAA", tareas)
+            }
+            <Informes project={project} tasks={tareasFiltradas} />
           </TabPanel>
 
           <TabPanel value={value} index={3}>
@@ -123,16 +123,8 @@ function ProjectView({ project }) {
           </TabPanel>
 
           <TabPanel value={value} index={4}>
-            <Calendario />
+            <Seguridad proyecto={project} />
           </TabPanel>
-
-          <TabPanel value={value} index={5}>
-            <Seguridad proyecto ={project}/>
-          </TabPanel>
-
-          
-
-
         </Box>
       </Grid>
     </>

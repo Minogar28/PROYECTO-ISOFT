@@ -8,6 +8,7 @@ const tareasSchema = schema({
  fechaDeCreacion:String,
  fechaFinalizacion:String,
  estado:String,
+ prioridad:String,
  IdProyecto: { type: schema.Types.ObjectId, ref: 'proyecto' }, 
  archivodAdjuntos:[],
  comentarios:[],

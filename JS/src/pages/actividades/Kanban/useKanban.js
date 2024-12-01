@@ -5,128 +5,193 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import { tasks as defaultTasks, sections as defaultSections } from "./helper";
 const useKanban = () => {
   const [tasks, setTasks] = useState(defaultTasks);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
   const [sections, setSections] = useState(defaultSections);
   const [newTaskModal, setNewTaskModal] = useState(false);
   const [newTaskDetails, setNewTaskDetails] = useState(null);
   const [descriptionModal, setDescriptionModal] = useState(false);
   const [selectedSection, setSelectedSection] = useState(null);
-  const getTasks = useCallback(id => {
-    return tasks.filter(task => task.section == id);
-  }, [tasks]);
+  const [tareas, setTareas] = useState([]);
+  const info = JSON.parse(localStorage.getItem('userSession'));
+  const Token = info.token
+
+  //LOGICA DE AÑADIR TAREAS
+  // Función para agregar tareas
+  const agregarTarea = async (tareaData) => {
+    try {
+      const response = await fetch(`${gsUrlApi}/tareas/insertar`, {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${Token}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(tareaData),
+      });
+
+      const data = await response.json();
+      if (!response.ok) {
+        throw new Error(data.mensaje || "Error al agregar tarea");
+      }
+
+      return data.datos; // Devuelve la tarea creada desde el backend
+    } catch (err) {
+      setError(err.message);
+      throw err;
+    }
+  };
+    // Función para listar tareas desde la API
+    const listarTareas = async () => {
+      setLoading(true);
+      try {
+        const response = await fetch(`${gsUrlApi}/tareas/listar`, {
+          method: "GET",
+          headers: {
+            Authorization: `Bearer ${Token}`,
+            "Content-Type": "application/json",
+            Accept: "application/json",
+          },
+        });
+        const data = await response.json();
+  console.log("Llegaron tareas...", data);
+  
+        if (response.ok) {
+          setTareas(data.datos || []); // Suponiendo que las tareas vienen en el campo `datos`
+        } else {
+          throw new Error(data.mensaje || "Error al listar tareas");
+        }
+      } catch (err) {
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+    const getTasks = useCallback(
+      (estado) => tareas.filter((tarea) => tarea.estado === estado),
+      [tareas]
+    );
+    
   function toggleNewTaskModal() {
     setNewTaskModal(prevState => !prevState);
   }
   const toggleDescriptionModal = () => {
     setDescriptionModal(prevState => !prevState);
   };
-  const newTask = section => {
+  ///Cambiado
+  const newTask = (estado) => {
     setNewTaskDetails({
-      dueDate: new Date(),
-      section: section
+      fechaFinalizacion: new Date(),
+      estado: estado,
     });
     setNewTaskModal(true);
   };
+  
   const onAddSection = () => {
     const section = {
       id: sections.length.toString(),
-      title: "New Section"
+      title: "Nueva Sección",
     };
     setSections([...sections, section]);
     setSelectedSection(section);
   };
-  const onChangeSectionTitle = e => {
+  
+  const onChangeSectionTitle = (e) => {
     if (selectedSection) {
       const nSection = {
         ...selectedSection,
-        title: e.target.value
+        title: e.target.value,
       };
       setSelectedSection(nSection);
-      setSections(sections.map(section => {
-        return section.id == selectedSection.id ? nSection : section;
-      }));
+      setSections(
+        sections.map((section) => {
+          return section.id === selectedSection.id ? nSection : section;
+        })
+      );
     }
   };
-  const handleDateChange = date => {
+  
+  const handleDateChange = (date) => {
     if (newTaskDetails) {
       setNewTaskDetails({
         ...newTaskDetails,
-        dueDate: date
+        fechaFinalizacion: date, // Cambia `dueDate` por `fechaFinalizacion`
       });
     }
   };
-  const onDragEnd = result => {
-    const {
-      source,
-      destination
-    } = result;
-
+  
+  const onDragEnd = (result) => {
+    const { source, destination } = result;
+  
     // dropped outside the list
     if (!destination) {
       return;
     }
+  
     let sourceOccurrence = source.index;
     let destinationOccurrence = destination.index;
     let sourceId = 0,
       destinationId = 0;
-    tasks.forEach((task, index) => {
-      if (task.section == source.droppableId) {
-        if (sourceOccurrence == 0) {
+    tareas.forEach((tarea, index) => {
+      if (tarea.estado === source.droppableId) {
+        if (sourceOccurrence === 0) {
           sourceId = index;
         }
         sourceOccurrence--;
       }
-      if (task.section == destination.droppableId) {
-        if (destinationOccurrence == 0) {
+      if (tarea.estado === destination.droppableId) {
+        if (destinationOccurrence === 0) {
           destinationId = index;
         }
         destinationOccurrence--;
       }
     });
-    const task = tasks[sourceId];
-    const newTasks = tasks.filter(t => t.id != task.id);
-    task.section = destination.droppableId;
-    const parity = destination.droppableId != source.droppableId ? -1 : 0;
-    setTasks([...newTasks.slice(0, destinationId + parity), task, ...newTasks.slice(destinationId + parity)]);
+  
+    const tarea = tareas[sourceId];
+    const newTareas = tareas.filter((t) => t._id !== tarea._id); // Cambia `id` por `_id`
+    tarea.estado = destination.droppableId;
+    const parity = destination.droppableId !== source.droppableId ? -1 : 0;
+    setTareas([
+      ...newTareas.slice(0, destinationId + parity),
+      tarea,
+      ...newTareas.slice(destinationId + parity),
+    ]);
   };
+  
 
   //Form Submission
   const taskSchema = yup.object({
-    category: yup.string().required("Select Project Category"),
-    title: yup.string().required("Please enter Project Title"),
-    priority: yup.mixed().required("Please enter Project Priority"),
-    description: yup.string().required("Please enter Project Description"),
-    assignTo: yup.string().required("Please select whom to assign")
+    categoria: yup.string().required("Selecciona la categoría del proyecto"),
+    nombreTarea: yup.string().required("Por favor ingresa el título de la tarea"),
+    prioridad: yup.mixed().required("Por favor selecciona la prioridad"),
+    descripcion: yup.string().required("Por favor ingresa la descripción"),
+    asignados: yup.string().required("Por favor selecciona a los asignados"),
   });
-  const {
-    control,
-    handleSubmit,
-    reset
-  } = useForm({
+  const { control, handleSubmit, reset } = useForm({
     resolver: yupResolver(taskSchema),
     defaultValues: {
-      priority: "high"
-    }
+      prioridad: "alta", // Cambia `priority` por `prioridad`
+    },
   });
-  const handleNewTask = handleSubmit(values => {
+  const handleNewTask = handleSubmit((values) => {
     const formData = {
-      category: values.category,
-      title: values.title,
-      priority: values.priority,
-      description: values.description,
-      userAvatar: [JSON.parse(values.assignTo)]
+      categoria: values.categoria,
+      nombreTarea: values.nombreTarea,
+      prioridad: values.prioridad,
+      descripcion: values.descripcion,
+      asignados: [JSON.parse(values.asignados)],
     };
     const newTask = {
       ...newTaskDetails,
       ...formData,
-      id: tasks.length,
-      comments: 35,
-      dueDate: newTaskDetails.dueDate.toLocaleDateString("en-US", {
+      _id: tareas.length.toString(),
+      comentarios: [],
+      fechaFinalizacion: newTaskDetails.fechaFinalizacion.toLocaleDateString("es-ES", {
         year: "numeric",
         month: "short",
-        day: "numeric"
-      })
+        day: "numeric",
+      }),
     };
-    setTasks([...tasks, newTask]);
+    setTareas([...tareas, newTask]);
     toggleNewTaskModal();
     reset();
   });
@@ -147,7 +212,9 @@ const useKanban = () => {
     descriptionModal,
     toggleDescriptionModal,
     onAddSection,
-    onChangeSectionTitle
+    onChangeSectionTitle,
+    agregarTarea,
+    listarTareas
   };
 };
 export default useKanban;

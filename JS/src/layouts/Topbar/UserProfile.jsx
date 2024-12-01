@@ -82,7 +82,7 @@ const UserProfile = () => {
             : "Usuario Desconocido"}
         </Typography>
         <Typography variant="caption" color={"text.primary"}>
-          {userData.RolNombre || "Rol Desconocido"}
+          {userData.RolNombre || "Administrador"}
         </Typography>
       </div>
     </Box>

@@ -1,33 +1,26 @@
-import React, { useState } from "react";
+import {
+  CalendarToday,
+  CheckCircle,
+  List,
+  Lock
+} from "@mui/icons-material";
 import {
   Box,
-  TextField,
   Button,
-  Typography,
-  Grid,
   Card,
   CardContent,
   FormControl,
-  InputLabel,
-  Select,
-  MenuItem,
-  ToggleButton,
-  ToggleButtonGroup,
+  Grid,
   InputAdornment,
-  IconButton, ListItem, ListItemIcon, ListItemText
+  InputLabel,
+  MenuItem,
+  Select,
+  TextField,
+  Typography
 } from "@mui/material";
-import {
-  List,
-  CalendarToday,
-  TableChart,
-  ViewList,
-  Add,
-  Lock, Delete,
-  CheckCircle,
-} from "@mui/icons-material";
-import Swal from "sweetalert2";
 import { PageBreadcrumb } from "@src/components";
-import { gsUrlApi } from "../../configuracionApi/apiConfig";
+import useCrearProyecto from "@src/hooks/useCrearProyecto";
+import React, { useState } from "react";
 
 const ProyectoForm = () => {
   const [nombreProyecto, setNombreProyecto] = useState("");
@@ -38,37 +31,14 @@ const ProyectoForm = () => {
   const [fechaEstimacion, setFechaEstimacion] = useState("");
   const fechaCreacion = new Date().toLocaleString();
   const [objetivos, setObjetivos] = useState([]);
-  const [nuevoObjetivo, setNuevoObjetivo] = useState("");
 
   //INFO DE USUARIO EN SESION
   const info = JSON.parse(localStorage.getItem('userSession'));
   const userData = info.userData[0];
-  
-  const handleAddObjetivo = () => {
-    if (nuevoObjetivo.trim() && !objetivos.includes(nuevoObjetivo.trim())) {
-      const updatedObjetivos = [...objetivos, nuevoObjetivo.trim()];
-      console.log("Objetivos actualizados:", updatedObjetivos); // Verificar los objetivos actualizados
-      setObjetivos(updatedObjetivos);
-      setNuevoObjetivo("");
-    } else {
-      Swal.fire({
-        icon: "warning",
-        title: "Objetivo duplicado o vacío",
-        text: "Por favor ingresa un objetivo válido y único.",
-      });
-    }
-  };
 
 
-
-  const handleRemoveObjetivo = (index) => {
-    
-        const nuevosObjetivos = objetivos.filter((_, i) => i !== index);
-        setObjetivos(nuevosObjetivos);
-        Swal.fire("Eliminado", "El objetivo ha sido eliminado.", "success");
-      
-  
-  };
+  // Hook personalizado para la creación de proyectos
+  const { crearProyecto, loading } = useCrearProyecto();
 
   const handleSave = async () => {
     const proyectoData = {
@@ -78,53 +48,22 @@ const ProyectoForm = () => {
       privacidad,
       vista,
       fechaFinalizacion: fechaEstimacion,
-      fechaCreacion,
+      fechaCreacion: new Date().toLocaleString(),
       objetivos,
-      IdAdmin:userData._id||""
+      IdAdmin: userData._id || "",
     };
 
     try {
-      const response = await fetch(`${gsUrlApi}/proyecto/insertar`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(proyectoData),
-      });
-
-      const data = await response.json();
-
-      if (response.ok) {
-        Swal.fire({
-          icon: "success",
-          title: "Proyecto creado correctamente",
-          text: "Redirigiendo a inicio...",
-          timer: 1000,
-          showConfirmButton: false,
-        });
-
-        // Redirige después de 3 segundos
-        setTimeout(() => {
-          window.location.href = "/inicio";
-        }, 1000);
-      } else {
-        Swal.fire({
-          icon: "error",
-          title: "Error al crear el proyecto",
-          text: data.error?.message || "Ocurrió un error inesperado.",
-        });
-      }
+      const data = await crearProyecto(proyectoData);
+      // Redirige después de crear el proyecto
+      setTimeout(() => {
+        window.location.href = "/inicio";
+      }, 500);
     } catch (error) {
-      Swal.fire({
-        icon: "error",
-        title: "Error de red",
-        text: "No se pudo conectar con el servidor. Por favor, intenta de nuevo más tarde.",
-      });
-      console.error("Error al enviar el proyecto:", error);
+      console.error("Error al crear el proyecto:", error);
     }
   };
-
-
+ 
   return (
     <>
       <PageBreadcrumb title="Creación de proyecto" subName="Crear" />
@@ -208,82 +147,6 @@ const ProyectoForm = () => {
                     <MenuItem value="Compartido">Compartido</MenuItem>
                   </Select>
                 </FormControl>
-
-                <Typography variant="subtitle1" mt={3} sx={{ fontWeight: "bold", color: "#2c3e50" }}>
-                  Vista predeterminada
-                </Typography>
-                <ToggleButtonGroup
-                  value={vista}
-                  exclusive
-                  onChange={(e, newVista) => setVista(newVista)}
-                  fullWidth
-                  sx={{ mt: 1 }}
-                >
-                  <ToggleButton value="Lista" sx={{ flexGrow: 1, borderRadius: 1 }}>
-                    <ViewList sx={{ mr: 1 }} />
-                    Lista
-                  </ToggleButton>
-                  <ToggleButton value="Tablero" sx={{ flexGrow: 1, borderRadius: 1 }}>
-                    <TableChart sx={{ mr: 1 }} />
-                    Tablero
-                  </ToggleButton>
-
-                  <ToggleButton value="Calendario" sx={{ flexGrow: 1, borderRadius: 1 }}>
-                    <CalendarToday sx={{ mr: 1 }} />
-                    Calendario
-                  </ToggleButton>
-                </ToggleButtonGroup>
-                <Typography variant="h6" sx={{ mt: 3, fontWeight: "bold" }}>
-                  Objetivos del Proyecto
-                </Typography>
-                <Box sx={{ mt: 2 }}>
-                  <TextField
-                    fullWidth
-                    label="Nuevo Objetivo"
-                    variant="outlined"
-                    value={nuevoObjetivo}
-                    onChange={(e) => setNuevoObjetivo(e.target.value)}
-                    InputProps={{
-                      endAdornment: (
-                        <InputAdornment position="end">
-                          <IconButton onClick={handleAddObjetivo}>
-                            <Add color="primary" />
-                          </IconButton>
-                        </InputAdornment>
-                      ),
-                    }}
-                  />
-                </Box>
-
-                <Box
-                  sx={{
-                    maxHeight: 200, // Altura máxima para la lista
-                    overflowY: "auto", // Activar el scroll vertical
-                    border: "1px solid #ddd", // Opcional, para darle un borde visible
-                    borderRadius: 2, // Bordes redondeados
-                    p: 2, // Espaciado interno
-                    mt: 2, // Espaciado superior
-                    bgcolor: "background.paper", // Color de fondo
-                  }}
-                >
-                  {objetivos.map((objetivo, index) => (
-                    <ListItem key={index} sx={{ display: "flex", justifyContent: "space-between" }}>
-                      <ListItemIcon>
-                        <CheckCircle color="success" />
-                      </ListItemIcon>
-                      <ListItemText
-                        primary={`${index + 1}. ${objetivo}`}
-                        primaryTypographyProps={{ variant: "body1" }}
-                      />
-                      <IconButton edge="end" onClick={() => handleRemoveObjetivo(index)}>
-                        <Delete color="error" />
-                      </IconButton>
-                    </ListItem>
-                  ))}
-
-                </Box>
-
-
 
                 <Box mt={4} display="flex" justifyContent="center">
                   <Button

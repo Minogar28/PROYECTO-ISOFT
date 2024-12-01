@@ -7,7 +7,7 @@ const MENU_ITEMS = [
     isTitle: true
   },{
     key: "crear",
-    label: "Crear",
+    label: "Creación",
     isTitle: false,
     icon: LuClipboardCheck,
     children: [
@@ -22,7 +22,7 @@ const MENU_ITEMS = [
   },
   {
     key: "proyectos",
-    label: "Gestionar",
+    label: "Gestión",
     isTitle: false,
     icon: LuFolderClosed,
     children: [
@@ -61,16 +61,16 @@ const MENU_ITEMS = [
     isTitle: true
   },
   {
-    key: "reportes",
-    label: " Reportes",
+    key: "reuniones",
+    label: " Reuniones",
     isTitle: false,
     icon: LuBarChart2,
     children: [
       {
-        key: "analisis-informes",
-        label: "Informes",
-        url: "/analisis/informes",
-        parentKey: "analisis-datos"
+        key: "sesiones",
+        label: "Sesiones",
+        url: "/reuniones/sesiones",
+        parentKey: "reuniones"
       },
       // {
       //   key: "analisis-objetivos",

@@ -9,7 +9,7 @@ import { assignees } from "./helper";
 import { useTabsChange } from "@src/hooks";
 import { staticAttachments } from "../../apps/tasks/Details/Attachments";
 import avatar4 from "@src/assets/images/users/avatar-4.jpg";
-
+import React, {useEffect, useState} from "react";
 const CustomTabPanel = (props) => {
   const { children, value, index } = props;
   return value === index && (
@@ -31,7 +31,7 @@ const TaskDescription = ({ descriptionModal, toggleDescriptionModal }) => {
         }}
       >
         <Typography variant="h5" sx={{ display: "flex", gap: 1 }}>
-          Página principal de la app iOS
+          Nombre de la Tarea {/* Cambiado para reflejar el nuevo nombre */}
           <Typography
             variant="caption"
             sx={{
@@ -43,7 +43,7 @@ const TaskDescription = ({ descriptionModal, toggleDescriptionModal }) => {
               marginInlineStart: "auto",
             }}
           >
-            Alta
+            Alta {/* Puede ser ajustado dinámicamente según `prioridad` */}
           </Typography>
         </Typography>
         <IconButton onClick={toggleDescriptionModal}>
@@ -61,7 +61,7 @@ const TaskDescription = ({ descriptionModal, toggleDescriptionModal }) => {
           Descripción:
         </Typography>
         <Typography variant="body2" color="text.secondary">
-          Este es un ejemplo de descripción del proyecto. Puedes añadir información adicional aquí según sea necesario.
+          Aquí va la descripción de la tarea {/* Cambiado para reflejar el campo `descripcion` */}
         </Typography>
 
         <Box
@@ -76,33 +76,34 @@ const TaskDescription = ({ descriptionModal, toggleDescriptionModal }) => {
               Fecha de creación
             </Typography>
             <Typography variant="body2" color="text.secondary">
-              17 de marzo de 2023 <small>1:00 PM</small>
+              {/* Cambiar dinámicamente según el valor de `fechaDeCreacion` */}
+              17 de noviembre de 2024 <small>1:00 PM</small>
             </Typography>
           </Box>
 
           <Box>
             <Typography variant="subtitle1" gutterBottom>
-              Fecha de vencimiento
+              Fecha de finalización {/* Cambiado de `Fecha de vencimiento` */}
             </Typography>
             <Typography variant="body2" color="text.secondary">
-              22 de diciembre de 2023 <small>1:00 PM</small>
+              {/* Cambiar dinámicamente según el valor de `fechaFinalizacion` */}
+              30 de noviembre de 2024 <small>1:00 PM</small>
             </Typography>
           </Box>
 
           <Box>
             <Typography variant="subtitle1" gutterBottom>
-              Asignado a:
+              Asignados: {/* Cambiado de `Asignado a:` */}
             </Typography>
             <Box
               sx={{
                 display: "flex",
               }}
             >
-              {assignees.slice(0, 3).map((assignee, idx) => (
-                <Tooltip title={assignee.title} key={idx}>
+              {/* Iterar sobre `asignados` en lugar de `assignees` */}
+              {assignees.slice(0, 3).map((asignado, idx) => (
+                <Tooltip title={asignado} key={idx}>
                   <Avatar
-                    src={assignee.image}
-                    alt={assignee.title}
                     sx={{
                       height: "32px",
                       width: "32px",
@@ -114,7 +115,9 @@ const TaskDescription = ({ descriptionModal, toggleDescriptionModal }) => {
                         transform: "translateY(-2px)",
                       },
                     }}
-                  />
+                  >
+                    {asignado[0]} {/* Mostrar la inicial si no hay imagen */}
+                  </Avatar>
                 </Tooltip>
               ))}
             </Box>
@@ -193,6 +196,7 @@ const TaskDescription = ({ descriptionModal, toggleDescriptionModal }) => {
         </Box>
       </DialogContent>
     </Dialog>
+
   );
 };
 
@@ -228,8 +232,13 @@ const Kanban = () => {
     descriptionModal,
     onChangeSectionTitle,
     onAddSection,
+    listarTareas
   } = useKanban();
 
+    // Llama a listarTareas al montar el componente
+    useEffect(() => {
+      listarTareas();
+    }, [listarTareas]);
   return (
     <>
       {/* <PageBreadcrumb title="Kanban" subName="Aplicaciones" /> */}
@@ -271,7 +280,7 @@ const Kanban = () => {
                         px: 2,
                       }}
                     >
-                      {selectedSection != section ? (
+                      {selectedSection !== section ? (
                         <Typography
                           variant="h6"
                           sx={{
@@ -289,19 +298,26 @@ const Kanban = () => {
                           onChange={onChangeSectionTitle}
                           onBlur={() => setSelectedSection(null)}
                           onKeyDownCapture={(event) =>
-                            event.key == "Enter" && setSelectedSection(null)
+                            event.key === "Enter" && setSelectedSection(null)
                           }
                           autoFocus
                         />
                       )}
-                      <IconButton onClick={() => newTask(section.id)} sx={{ marginRight: "8px" }}>
+                      <IconButton
+                        onClick={() => newTask(section.id)} // Cambiar `section.id` si ahora es `estado`
+                        sx={{ marginRight: "8px" }}
+                      >
                         <LuPlus />
                       </IconButton>
                     </Box>
 
                     <SimpleBarStyled>
-                      {getTasks(section.id).map((item, idx) => (
-                        <Draggable draggableId={item.id + ""} index={idx} key={item.id}>
+                      {getTasks(section.id).map((tarea, idx) => (
+                        <Draggable
+                          draggableId={tarea._id} // Cambiar `id` por `_id`
+                          index={idx}
+                          key={tarea._id} // Cambiar `id` por `_id`
+                        >
                           {(provided) => (
                             <Card
                               sx={{
@@ -311,7 +327,10 @@ const Kanban = () => {
                               {...provided.draggableProps}
                               {...provided.dragHandleProps}
                             >
-                              <TaskItem task={item} toggleDescriptionModal={toggleDescriptionModal} />
+                              <TaskItem
+                                task={tarea} // Cambiar `task` por `tarea`
+                                toggleDescriptionModal={toggleDescriptionModal}
+                              />
                             </Card>
                           )}
                         </Draggable>
@@ -322,24 +341,10 @@ const Kanban = () => {
                 )}
               </Droppable>
             ))}
-            <Box
-              sx={{
-                minWidth: "300px",
-                height: "400px",
-                borderRadius: 1,
-                textAlign: "center",
-                pt: 2,
-                border: "1px solid",
-                borderColor: "divider",
-              }}
-            >
-              <Button color={"primary"} startIcon={<LuPlus />} onClick={onAddSection}>
-                Agregar sección
-              </Button>
-            </Box>
           </Box>
         </DragDropContext>
       </Box>
+
 
       <Dialog open={newTaskModal} onClose={toggleNewTaskModal} maxWidth={"md"} fullWidth>
         <DialogTitle
@@ -362,42 +367,28 @@ const Kanban = () => {
           dividers
         >
           <form onSubmit={handleNewTask}>
-            <SelectInput
-              label="Proyecto"
-              name="category"
-              containerSx={{
-                my: 1,
-              }}
-              control={control}
-            >
-              <MenuItem value="Attex">Attex</MenuItem>
-              <MenuItem value="CRM">CRM</MenuItem>
-              <MenuItem value="Design">Diseño</MenuItem>
-              <MenuItem value="iOS">iOS</MenuItem>
-            </SelectInput>
-
             <Grid container spacing={2} sx={{ my: 1 }}>
               <Grid item xxl={8} xs={12}>
                 <FormInput
                   type="text"
-                  label="Título"
-                  name="title"
-                  placeholder="Ingresa un título"
+                  label="Nombre de la tarea" // Cambiado de "Título"
+                  name="nombreTarea" // Cambiado de "title"
+                  placeholder="Ingresa el nombre de la tarea"
                   control={control}
                 />
               </Grid>
 
               <Grid item xxl={4} xs={12}>
-                <SelectInput name="priority" label="Prioridad" control={control}>
-                  <MenuItem value="low">Baja</MenuItem>
-                  <MenuItem value="medium">Media</MenuItem>
-                  <MenuItem value="high">Alta</MenuItem>
+                <SelectInput name="prioridad" label="Prioridad" control={control}> {/* Cambiado de "priority" */}
+                  <MenuItem value="baja">Baja</MenuItem>
+                  <MenuItem value="media">Media</MenuItem>
+                  <MenuItem value="alta">Alta</MenuItem>
                 </SelectInput>
               </Grid>
             </Grid>
 
             <FormInput
-              name="description"
+              name="descripcion" // Cambiado de "description"
               label="Descripción"
               containerSx={{
                 my: 1,
@@ -412,10 +403,10 @@ const Kanban = () => {
 
             <Grid container spacing={2} sx={{ my: 1 }}>
               <Grid item xl={6} xs={12}>
-                <SelectInput name="assignTo" label="Asignar a" control={control}>
-                  {assignees.map((assignee, idx) => (
-                    <MenuItem key={idx} value={JSON.stringify(assignee)}>
-                      {assignee.title}
+                <SelectInput name="asignados" label="Asignar a" control={control}> {/* Cambiado de "assignTo" */}
+                  {assignees.map((asignado, idx) => ( // Cambiado de "assignee"
+                    <MenuItem key={idx} value={JSON.stringify(asignado)}>
+                      {asignado.title} {/* Mantener el título del asignado */}
                     </MenuItem>
                   ))}
                 </SelectInput>
@@ -428,14 +419,14 @@ const Kanban = () => {
                     flexDirection: "column",
                   }}
                 >
-                  <FormLabel htmlFor="task-dueDate" sx={{ mb: 1 }}>
-                    Fecha de vencimiento
+                  <FormLabel htmlFor="task-fechaFinalizacion" sx={{ mb: 1 }}> {/* Cambiado de "task-dueDate" */}
+                    Fecha de finalización
                   </FormLabel>
 
                   <CustomDatepicker
                     hideAddon
                     dateFormat="yyyy-MM-dd"
-                    value={newTaskDetails?.dueDate}
+                    value={newTaskDetails?.fechaFinalizacion} // Cambiado de "dueDate"
                     inputClass="form-input"
                     onChange={(date) => {
                       handleDateChange(date);
@@ -465,6 +456,7 @@ const Kanban = () => {
           </form>
         </DialogContent>
       </Dialog>
+
 
       <TaskDescription descriptionModal={descriptionModal} toggleDescriptionModal={toggleDescriptionModal} />
     </>

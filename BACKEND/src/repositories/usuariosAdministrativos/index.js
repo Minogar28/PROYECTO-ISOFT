@@ -334,7 +334,6 @@ const repo = {
         Usuario:1
       }).populate('IdRol');
       
-      console.log("respuesta--", response);
       
       // Verifica si `response` tiene algún valor antes de intentar acceder a sus propiedades
       if (response && response.length > 0) {

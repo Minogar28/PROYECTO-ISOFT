@@ -6,7 +6,7 @@ import { useAuthContext } from "@src/states";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import { useSnackbar } from "notistack";
-import { gsUrlApi } from "../../../configuracionApi/apiConfig";
+import { gsUrlApi } from "../../../Apiconfig/apiConfig";
 import Swal from "sweetalert2";
 
 export default function useLogin() {

@@ -2,6 +2,7 @@ const constants = require('../../constants');
 const { v1: uuidv1 } = require('uuid');
 const mongo = require('mongodb');
 const objModel = require('../../models/proyecto'); // Modelo del proyecto
+const mongoose = require('mongoose');
 
 const v1options = {
   node: [0x01, 0x23, 0x45, 0x67, 0x89, 0xab],
@@ -178,6 +179,37 @@ const repo = {
       };
     }
   },
+  listarPorMiembro: async (miembroId) => {
+    try {
+      // Crear la consulta con el miembroId como cadena
+      const query = { "equipo._id": miembroId };
+      console.log("Query ejecutada:", query);
+  
+      // Ejecutar la consulta
+      const response = await objModel.find(query).sort('nombreProyecto'); // Ordenar por 'nombreProyecto'
+      console.log("Respuesta obtenida:", response);
+  
+      // Procesar el resultado
+      const status = response.length > 0 ? constants.SUCCEEDED_MESSAGE : constants.NOT_FOUND_ERROR_MESSAGE;
+      const mensaje = response.length > 0
+        ? "Proyectos encontrados"
+        : "No se encontraron proyectos para el miembro proporcionado";
+  
+      return { status, mensaje, datos: response };
+    } catch (e2) {
+      console.error("Error en listarPorMiembro:", e2);
+      return {
+        status: constants.INTERNAL_ERROR_MESSAGE,
+        mensaje: "Error al listar los proyectos por miembro",
+        datos: [],
+        failure_code: e2.code,
+        failure_message: e2.message,
+      };
+    }
+  }  
+  
+  
+  
 };
 
 module.exports = repo;
