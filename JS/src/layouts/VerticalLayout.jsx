@@ -17,14 +17,16 @@ const ContentWrapper = styled("div")(({
     backgroundColor: theme.palette.background.default,
     padding: "24px",
     paddingTop: 0,
-    height: "100%"
+    height: "100%",borderTopRightRadius: 20, // Extremo superior derecho
+    borderBottomRightRadius: 20, // Extremo inferior derecho
   };
 });
 const VerticalLayout = ({
   children
 }) => {
   return <div style={{
-    display: "flex"
+    display: "flex",
+    
   }}>
       <Suspense fallback={<div />}>
         <LeftSideBar />
@@ -32,7 +34,7 @@ const VerticalLayout = ({
       <div style={{
       flexDirection: "column",
       display: "flex",
-      width: "100%"
+      width: "100%",
     }}>
         <Suspense fallback={<div />}>
           <Topbar />

@@ -39,7 +39,6 @@ const Inicio = () => {
       <Box
         sx={{
           p: 4,
-          bgcolor: "background.default",
           minHeight: "60vh",
           position: "relative",
           overflow: "hidden",
