@@ -3,11 +3,11 @@ import { useState, useEffect } from "react";
 import { gsUrlApi } from "../Apiconfig/apiConfig";
 import Swal from "sweetalert2";
 
-const useProyecto = () => { 
+const useProyecto = () => {
   const [proyectos, setProyectos] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-  const [tareas, setTareas] = useState([]); 
+  const [tareas, setTareas] = useState([]);
   const info = JSON.parse(localStorage.getItem('userSession'));
   const userData = info.userData[0];
 
@@ -84,12 +84,12 @@ const useProyecto = () => {
       });
 
       const data = await response.json();
-
-      if (response.ok) {
-        return data.datos; // Devuelve el usuario encontrado
+      console.log("MDNNA", data);
+      if (response.ok && data.datos) {
+        return data.datos; // Devuelve directamente el objeto usuario
       } else {
-        throw new Error(data.Mensaje || "Error al consultar el usuario");
-      }
+
+        throw new Error(data.Mensaje || "Usuario no encontrado");      }
     } catch (err) {
       setError(err.message);
       throw err;
@@ -112,34 +112,32 @@ const useProyecto = () => {
         },
         body: JSON.stringify(proyecto),
       });
-
+  
       const data = await response.json();
-
-      if (response.ok) {
+      console.log("Relevante..", data);
+  
+      // Verificar si el estado de la respuesta es "SUCCEEDED"
+      if (data.status === "SUCCEEDED") {
         // Actualizar el estado local con el proyecto actualizado
         setProyectos((prev) =>
           prev.map((p) =>
-            p._id === proyecto._id ? data.datos[0] : p
+            p._id === proyecto._id ? { ...p, ...proyecto } : p
           )
         );
-
-        // Swal.fire({
-        //   icon: "success",
-        //   title: "Proyecto actualizado",
-        //   text: "El proyecto ha sido actualizado correctamente.",
-        // });
-
-        return data.datos[0];
+  
+        return proyecto; // Retornar el proyecto actualizado localmente
       } else {
         throw new Error(data.mensaje || "Error al actualizar el proyecto");
       }
     } catch (err) {
+      console.error("Error en actualizarProyecto:", err.message);
       setError(err.message);
       throw err;
     } finally {
       setLoading(false);
     }
   };
+  
 
 
   // Función para agregar tareas
@@ -193,29 +191,29 @@ const useProyecto = () => {
   };
 
   // Función para actualizar una tarea existente
-const actualizarTarea = async (tareaData) => {
-  try {
-    const response = await fetch(`${gsUrlApi}/tareas/actualizar`, {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${Token}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(tareaData),
-    });
+  const actualizarTarea = async (tareaData) => {
+    try {
+      const response = await fetch(`${gsUrlApi}/tareas/actualizar`, {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${Token}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(tareaData),
+      });
 
-    const data = await response.json();
-    if (!response.ok) {
-      throw new Error(data.mensaje || "Error al actualizar tarea");
+      const data = await response.json();
+      if (!response.ok) {
+        throw new Error(data.mensaje || "Error al actualizar tarea");
+      }
+
+      // Devuelve la tarea actualizada desde el backend
+      return data.datos[0];
+    } catch (err) {
+      setError(err.message);
+      throw err; // Lanza el error para manejarlo en el componente
     }
-
-    // Devuelve la tarea actualizada desde el backend
-    return data.datos[0];
-  } catch (err) {
-    setError(err.message);
-    throw err; // Lanza el error para manejarlo en el componente
-  }
-};
+  };
 
 
   return {

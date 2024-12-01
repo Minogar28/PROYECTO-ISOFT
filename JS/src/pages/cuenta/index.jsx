@@ -1,7 +1,7 @@
 import { Avatar, Box, Card, CardContent, Grid, Typography, useTheme, Button, TextField, Switch, InputAdornment } from "@mui/material";
 import { PageBreadcrumb } from "@src/components";
 import { useEffect, useState } from "react";
-import { gsUrlApi } from "../../configuracionApi/apiConfig";
+import { gsUrlApi } from "../../Apiconfig/apiConfig";
 import { AccountCircle, Save as SaveIcon, CalendarToday, Phone, Mail, Person, LocationOn, Badge } from "@mui/icons-material";
 
 const Profile = () => {

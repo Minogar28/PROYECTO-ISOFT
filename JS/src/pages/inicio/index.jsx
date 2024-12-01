@@ -1,11 +1,13 @@
 import React from "react";
-import { Box, Typography, Paper, Button, Avatar, Divider, Grid } from "@mui/material";
+import { Box, Typography, Paper, Button, Avatar, Divider, Grid, useMediaQuery, useTheme } from "@mui/material";
 import { PageBreadcrumb } from "@src/components";
 import { AssignmentTurnedIn, Person } from "@mui/icons-material";
 import { motion } from "framer-motion";
 import logo from "@src/assets/images/iconoCelerium.png"; // Importa el logo
 
 const Inicio = () => {
+  const theme = useTheme();
+  const isSmallScreen = useMediaQuery(theme.breakpoints.down("sm"));
   const info = JSON.parse(localStorage.getItem("userSession"));
   const userData = info.userData[0];
 
@@ -23,6 +25,13 @@ const Inicio = () => {
     },
   };
 
+  // Función para determinar el saludo según la hora
+  const getGreeting = () => {
+    const hour = new Date().getHours();
+    if (hour >= 6 && hour < 12) return "Buenos días";
+    if (hour >= 12 && hour < 18) return "Buenas tardes";
+    return "Buenas noches";
+  };
   return (
     <>
       <PageBreadcrumb title="Inicio" subName="Páginas" />
@@ -51,26 +60,48 @@ const Inicio = () => {
         ></Box>
 
         {/* Encabezado de Bienvenida */}
-        <Box sx={{ textAlign: "center", mb: 4, zIndex: 1, position: "relative" }}>
+        <Box
+          sx={{
+            textAlign: "center",
+            mb: 4,
+            zIndex: 1,
+            position: "relative",
+            px: isSmallScreen ? 2 : 4,
+          }}
+        >
           <motion.div initial="hidden" animate="visible" variants={fadeIn}>
             <Box display="flex" justifyContent="center" alignItems="center" mb={2}>
-              <img src={logo} alt="Logo" style={{ width: 100, height: 100 }} />
+              <img
+                src={logo}
+                alt="Logo"
+                style={{
+                  width: isSmallScreen ? 80 : 100,
+                  height: isSmallScreen ? 80 : 100,
+                }}
+              />
             </Box>
             <Typography variant="h6" sx={{ fontStyle: "italic" }}>
-              {new Date().toLocaleDateString("es-ES", {
-                weekday: "long",
-                day: "numeric",
-                month: "long",
-              })}
-            </Typography>
-            <Typography variant="h4" sx={{ fontWeight: "bold", mt: 1 }}>
-              Buenas noches, {userData.Usuario || ""}
-            </Typography>
+        {new Date().toLocaleDateString("es-ES", {
+          weekday: "long",
+          day: "numeric",
+          month: "long",
+        })}
+      </Typography>
+      <Typography variant="h4" sx={{ fontWeight: "bold", mt: 1 }}>
+        {getGreeting()}, {userData.Usuario || ""}
+      </Typography>
             <Typography variant="body1" sx={{ mt: 2 }}>
               ¡Esperamos que tengas un día productivo! Recuerda revisar tus pendientes y celebrar tus logros.
             </Typography>
 
-            <Box display="flex" justifyContent="center" alignItems="center" gap={2} mt={3}>
+            <Box
+              display="flex"
+              justifyContent="center"
+              alignItems="center"
+              gap={isSmallScreen ? 1 : 2}
+              mt={3}
+              flexDirection={isSmallScreen ? "column" : "row"}
+            >
               <motion.div whileHover={hoverEffect.hover}>
                 <Button variant="outlined" color="inherit">
                   Mi semana
@@ -91,7 +122,16 @@ const Inicio = () => {
         </Box>
 
         {/* Tarjetas de resumen */}
-        <Grid container spacing={2} sx={{ mt: 4, zIndex: 1, position: "relative" }}>
+        <Grid
+          container
+          spacing={2}
+          sx={{
+            mt: 4,
+            zIndex: 1,
+            position: "relative",
+            px: isSmallScreen ? 1 : 4,
+          }}
+        >
           <Grid item xs={12} sm={6}>
             <motion.div whileHover={hoverEffect.hover}>
               <Paper

@@ -1,7 +1,6 @@
-import React,{ useRef } from "react";
+import React, { useRef } from "react";
 import {
   Box,
-  Button,
   Typography,
   Table,
   TableBody,
@@ -11,12 +10,17 @@ import {
   TableRow,
   Paper,
   LinearProgress,
+  useMediaQuery,
 } from "@mui/material";
-import { Assessment, CheckCircle, Error, HourglassEmpty, Person } from "@mui/icons-material";
+import { useTheme } from "@mui/material/styles";
 import ReactApexChart from "react-apexcharts";
-import InformePdf from "./informePdf"
+import InformePdf from "./informePdf";
+
 const Informes = ({ project, tasks }) => {
   const chartRef = useRef();
+  const theme = useTheme();
+  const isSmallScreen = useMediaQuery(theme.breakpoints.down("sm"));
+
   const totalTareas = tasks.length;
   const tareasCompletadas = tasks.filter((task) => task.estado === "Completadas").length;
   const tareasPendientes = totalTareas - tareasCompletadas;
@@ -46,7 +50,7 @@ const Informes = ({ project, tasks }) => {
     chart: {
       type: "bar",
       stacked: true,
-      height: 380,
+      height: isSmallScreen ? 250 : 380,
     },
     series: [
       {
@@ -54,7 +58,7 @@ const Informes = ({ project, tasks }) => {
         data: [tareasCompletadas],
       },
       {
-        name: "Pendientes",
+        name: "Por Hacer",
         data: [tareasPendientes],
       },
     ],
@@ -68,27 +72,25 @@ const Informes = ({ project, tasks }) => {
     title: { text: "Estado de Tareas", align: "center" },
   };
 
-  const renderEstadoIcono = (estado) => {
-    switch (estado) {
-      case "Completadas":
-        return <CheckCircle color="success" />;
-      case "Pendiente":
-        return <HourglassEmpty color="warning" />;
-      case "Por Hacer":
-        return <Error color="error" />;
-      default:
-        return null;
-    }
-  };
-
   return (
-    <Box sx={{ p: 4 }}>
+    <Box sx={{ p: isSmallScreen ? 2 : 4 }}>
       {/* Encabezado de métricas */}
-      <Box sx={{ display: "flex", justifyContent: "space-between", mb: 4 }}>
-        <Typography variant="h4" sx={{ fontWeight: "bold", color: "primary.main" }}>
+      <Box
+        sx={{
+          display: "flex",
+          flexDirection: isSmallScreen ? "column" : "row",
+          justifyContent: "space-between",
+          mb: 4,
+          alignItems: isSmallScreen ? "flex-start" : "center",
+        }}
+      >
+        <Typography
+          variant={isSmallScreen ? "h5" : "h4"}
+          sx={{ fontWeight: "bold", color: "primary.main", mb: isSmallScreen ? 2 : 0 }}
+        >
           Estado proyecto: {getEstadoProyecto()}
         </Typography>
-        <InformePdf project={project} tasks={tasks} chartRef={chartRef}/>
+        <InformePdf project={project} tasks={tasks} chartRef={chartRef} />
       </Box>
 
       {/* Barra de carga */}
@@ -100,7 +102,11 @@ const Informes = ({ project, tasks }) => {
           <LinearProgress
             variant="determinate"
             value={estadoProyecto}
-            sx={{ flexGrow: 1, height: 10, borderRadius: 5 }}
+            sx={{
+              flexGrow: 1,
+              height: isSmallScreen ? 8 : 10,
+              borderRadius: 5,
+            }}
           />
           <Typography variant="body1" sx={{ fontWeight: "bold" }}>
             {Math.round(estadoProyecto)}%
@@ -109,38 +115,45 @@ const Informes = ({ project, tasks }) => {
       </Box>
 
       {/* Gráfico de barras */}
-      <Box ref={chartRef}sx={{ mb: 4 }}>
-       
+      <Box ref={chartRef} sx={{ mb: 4 }}>
         <ReactApexChart
           className="apex-charts"
           options={chartOptions}
           series={chartOptions.series}
           type="bar"
-          height={380}
+          height={chartOptions.chart.height}
         />
       </Box>
 
       {/* Tabla con estados de tareas */}
-      <TableContainer component={Paper} sx={{ mb: 4 }}>
-        <Table>
+      <TableContainer
+        component={Paper}
+        sx={{
+          mb: 4,
+          maxHeight: isSmallScreen ? 300 : 400,
+          overflowY: "auto",
+          border: `1px solid ${theme.palette.divider}`,
+        }}
+      >
+        <Table stickyHeader>
           <TableHead>
             <TableRow>
-              <TableCell align="center" sx={{ fontWeight: "bold" }}>
+              <TableCell align="left" sx={{ fontWeight: "bold", width: isSmallScreen ? "40%" : "30%" }}>
                 Tarea
               </TableCell>
-              <TableCell align="center" sx={{ fontWeight: "bold" }}>
+              <TableCell align="left" sx={{ fontWeight: "bold", width: "20%" }}>
                 Asignado a
               </TableCell>
-              <TableCell align="center" sx={{ fontWeight: "bold" }}>
+              <TableCell align="center" sx={{ fontWeight: "bold", width: "15%" }}>
                 Estado de la Tarea
               </TableCell>
-              <TableCell align="center" sx={{ fontWeight: "bold" }}>
+              <TableCell align="center" sx={{ fontWeight: "bold", width: "15%" }}>
                 Fecha de Creación
               </TableCell>
-              <TableCell align="center" sx={{ fontWeight: "bold" }}>
+              <TableCell align="center" sx={{ fontWeight: "bold", width: "15%" }}>
                 Plazo de Entrega
               </TableCell>
-              <TableCell align="center" sx={{ fontWeight: "bold" }}>
+              <TableCell align="center" sx={{ fontWeight: "bold", width: "15%" }}>
                 Estado Actual
               </TableCell>
             </TableRow>
@@ -148,23 +161,28 @@ const Informes = ({ project, tasks }) => {
           <TableBody>
             {tasks.map((task) => (
               <TableRow key={task._id.$oid}>
-                <TableCell align="center">{task.nombreTarea}</TableCell>
-                <TableCell align="center">
+                <TableCell
+                  align="left"
+                  sx={{ whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}
+                >
+                  {task.nombreTarea}
+                </TableCell>
+                <TableCell align="left">
                   <Box
                     sx={{
                       display: "flex",
-                      alignItems: "center",
+                      flexWrap: "wrap",
                       gap: 1,
-                      justifyContent: "center",
                     }}
                   >
-                    <Person color="primary" />
-                    {task.asignados
-                      .map((asignado) => asignado.NombreCompleto)
-                      .join(", ")}
+                    {task.asignados.map((asignado, index) => (
+                      <Typography key={index} variant="body2">
+                        {asignado.NombreCompleto}
+                      </Typography>
+                    ))}
                   </Box>
                 </TableCell>
-                <TableCell align="center">{renderEstadoIcono(task.estado)}</TableCell>
+                <TableCell align="center">{task.estado}</TableCell>
                 <TableCell align="center">
                   {new Date(task.fechaDeCreacion).toLocaleDateString()}
                 </TableCell>

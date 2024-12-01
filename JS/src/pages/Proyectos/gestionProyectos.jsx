@@ -14,11 +14,11 @@ import {
   Typography
 } from "@mui/material";
 import React, { useState, useEffect, useCallback } from "react";
-import ProjectDetails from "./detallesProyecto"; // Importar el nuevo componente
-import Informes from "./informes";
-import Seguridad from "./seguridad";
+import ProjectDetails from "./detalles/detallesProyecto"; // Importar el nuevo componente
+import Informes from "./informes/informes";
+import Seguridad from "./seguridad/seguridad";
 import Kanban from "./tablero";
-import Tareas from "./tareas";
+import Tareas from "./tareas/tareas";
 import useProyecto from "@src/hooks/useProyecto.js";
 
 function TabPanel(props) {
@@ -113,8 +113,7 @@ function ProjectView({ project }) {
           </TabPanel>
 
           <TabPanel value={value} index={2}>
-            {console.log("AAAA", tareas)
-            }
+         
             <Informes project={project} tasks={tareasFiltradas} />
           </TabPanel>
 

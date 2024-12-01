@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Avatar, Box, Button, Card, CardActions, Dialog, DialogContent, DialogTitle, Divider, FormLabel, Grid, IconButton, MenuItem, Stack, Tab, Tabs, TextField, Tooltip, Typography, Autocomplete } from "@mui/material";
+import { Avatar, Box, Button,CircularProgress, Card, CardActions, Dialog, DialogContent, DialogTitle, Divider, FormLabel, Grid, IconButton, MenuItem, Stack, Tab, Tabs, TextField, Tooltip, Typography, Autocomplete } from "@mui/material";
 import { LuAtSign, LuPlus, LuReply, LuSendHorizonal, LuUpload, LuX } from "react-icons/lu";
 import { DragDropContext, Draggable, Droppable } from "@hello-pangea/dnd";
 import useTareas from "./useTareas";
@@ -327,7 +327,25 @@ const TaskDescription = ({ descriptionModal, toggleDescriptionModal, tarea }) =>
     );
 };
 
-
+// Función externa para mostrar el spinner de carga
+const LoadingSpinner = () => {
+    return (
+        <Box
+            sx={{
+                display: "flex",
+                flexDirection: "column",
+                justifyContent: "center",
+                alignItems: "center",
+                height: "100vh",
+            }}
+        >
+            <CircularProgress size={60} />
+            <Typography variant="h6" sx={{ mt: 2 }}>
+                Cargando tareas...
+            </Typography>
+        </Box>
+    );
+};
 const Kanban = ({ project }) => {
     const [selectedTask, setSelectedTask] = useState(null);
     const [value, setValue] = useState(0); // Estado para manejar el tab seleccionado
@@ -357,7 +375,7 @@ const Kanban = ({ project }) => {
         handleDateChange,
         onAddSection,
         onChangeSectionTitle,
-        agregarTarea
+        agregarTarea,loading 
     } = useTareas();
     const availableUsers = [
         { NombreCompleto: "Juan Pérez" },
@@ -438,6 +456,10 @@ const Kanban = ({ project }) => {
     }));
 
     return (
+        <>
+        {loading ? (
+            <LoadingSpinner />
+        ) : (
         <Box>
            
             <DragDropContext onDragEnd={onDragEnd}>
@@ -721,6 +743,8 @@ const Kanban = ({ project }) => {
                 </DialogContent>
             </Dialog>
         </Box>
+        )}
+        </>
     );
 };
 
