@@ -20,21 +20,23 @@ const AuthLayout = ({
         alignItems: "center",
         justifyContent: "center",
         minHeight: "100vh",
-        
+
       }}>
           <Box sx={{
           display: "flex",
           justifyContent: "center"
+          
         }}>
             <Box sx={{
-            maxWidth: "448px"
+            maxWidth: "448px",
+
           }}>
               <Card sx={{
-              borderRadius: 2,
+              borderRadius: 10,
               width: 416
             }}>
                 <CardContent sx={{
-                backgroundColor: "primary.main",
+                backgroundColor:"InfoBackground",
                 p: 4
               }}>
                   <Link to="/" style={{
@@ -45,12 +47,12 @@ const AuthLayout = ({
                   </Link>
                 </CardContent>
                 <CardContent sx={{
-                p: 3
+                p: 1
               }}>
                   <Box sx={{
                   textAlign: "center",
                   mx: "auto",
-                  width: "75%"
+                  width: "75%",mt:"-10vh"
                 }}>
                     {pageImage && <Avatar variant="rounded" src={pageImage} alt="mail sent image" sx={{
                     mx: "auto",
@@ -59,7 +61,7 @@ const AuthLayout = ({
                   }} />}
                     <Typography variant="h4" sx={{
                     textAlign: "center",
-                    mb: "16px",
+                    mb: "10px",
                     mt: 4.5
                   }}>
                       {authTitle}

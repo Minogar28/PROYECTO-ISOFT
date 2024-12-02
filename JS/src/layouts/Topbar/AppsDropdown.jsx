@@ -1,9 +1,3 @@
-/*
- * Copyright (c) 2023.
- * File Name: AppsDropdown.tsx
- * Author: Coderthemes
- */
-
 import { Box, Grid, IconButton, Menu, Typography } from "@mui/material";
 import { useDropdownMenu } from "@src/hooks";
 import { LuLayoutGrid } from "react-icons/lu";
@@ -47,20 +41,20 @@ const AppsDropdown = () => {
     }
   }));
   return <>
-      <IconButton onClick={handleClick} color={"inherit"}>
-        <LuLayoutGrid />
-      </IconButton>
-      <StyledMenu id="demo-customized-menu" MenuListProps={{
+    <IconButton onClick={handleClick} color={"inherit"}>
+      <LuLayoutGrid />
+    </IconButton>
+    <StyledMenu id="demo-customized-menu" MenuListProps={{
       "aria-labelledby": "demo-customized-button"
     }} anchorEl={anchorEl} open={open} onClose={handleClose}>
-        <Box sx={{
+      <Box sx={{
         p: "18px",
         width: "318px"
       }}>
-          <Grid container spacing={2}>
-            {apps.map((app, idx) => {
+        <Grid container spacing={2}>
+          {apps.map((app, idx) => {
             return <Grid item md={4} key={idx}>
-                  <Box sx={{
+              <Box sx={{
                 py: "10px",
                 textAlign: "center",
                 "&:hover": {
@@ -69,19 +63,19 @@ const AppsDropdown = () => {
                 cursor: "pointer",
                 borderRadius: "5px"
               }}>
-                    <img src={app.icon} alt={app.name} height={"24px"} />
-                    <Typography component={"p"} sx={{
+                <img src={app.icon} alt={app.name} height={"24px"} />
+                <Typography component={"p"} sx={{
                   fontSize: "13px",
                   color: "text.secondary"
                 }}>
-                      {app.name}
-                    </Typography>
-                  </Box>
-                </Grid>;
+                  {app.name}
+                </Typography>
+              </Box>
+            </Grid>;
           })}
-          </Grid>
-        </Box>
-      </StyledMenu>
-    </>;
+        </Grid>
+      </Box>
+    </StyledMenu>
+  </>;
 };
 export default AppsDropdown;

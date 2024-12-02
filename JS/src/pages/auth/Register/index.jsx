@@ -10,7 +10,7 @@ import EmailIcon from "@mui/icons-material/Email";
 import PersonIcon from "@mui/icons-material/Person";
 import PhoneIcon from "@mui/icons-material/Phone";
 import AuthLayout from "../AuthLayout";
-import { gsUrlApi } from "../../../configuracionApi/apiConfig";
+import { gsUrlApi } from "@src/Apiconfig/Apiconfig";
 import Swal from "sweetalert2";
 
 const EnlaceInferior = () => (
@@ -95,9 +95,9 @@ const Registro = () => {
   };
 
   return (
-    <AuthLayout authTitle="Registro gratuito" helpText="¿No tienes cuenta? Crea una cuenta, toma menos de un minuto." bottomLinks={<EnlaceInferior />}>
+    <AuthLayout  authTitle="Registro gratuito" helpText="¿No tienes cuenta? Crea una cuenta, toma menos de un minuto." bottomLinks={<EnlaceInferior />}>
       <form onSubmit={handleSubmit(onSubmit)}>
-        <Grid container spacing={2}sx={{  overflowY: 'auto',width: '100%', maxWidth: '400px', mx: 'auto' ,maxHeight:'30vh'}}>
+        <Grid container spacing={2}sx={{  overflowY: 'auto',width: '100%', maxWidth: '400px', mx: 'auto' ,maxHeight:'45vh', padding:3}}>
         <Grid item xs={6}>
             <FormInput name="primerNombre" type="text" label="Primer Nombre" control={control} icon={<PersonIcon />} />
           </Grid>

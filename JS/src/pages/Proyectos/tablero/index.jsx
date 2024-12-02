@@ -472,7 +472,16 @@ const Kanban = ({ project }) => {
                         height: "calc(100vh - 165px)",
                     }}
                 >
-                    {sections.map((section) => (
+                    {sections.length === 0 ? ( // Verifica si no hay tareas agrupadas
+                    <Typography
+                        variant="h6"
+                        color="text.secondary"
+                        sx={{ margin: "auto", textAlign: "center" }}
+                    >
+                        No hay tareas asignadas aún.
+                    </Typography>
+                ) : (
+                    sections.map((section) => (
                         <Droppable droppableId={section.id} key={section.id}>
                             {(provided) => (
                                 <Box
@@ -559,7 +568,7 @@ const Kanban = ({ project }) => {
                                 </Box>
                             )}
                         </Droppable>
-                    ))}
+                    )))}
                 </Box>
             </DragDropContext>
 

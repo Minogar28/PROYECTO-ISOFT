@@ -33,19 +33,21 @@ const UserProfile = () => {
       icon: LuUserCircle2,
       label: "Mi Cuenta",
       link: "/apps/micuenta"
-    }, {
-      icon: LuSettings,
-      label: "Configuración"
-    }, 
+    },
+    //  {
+    //   icon: LuSettings,
+    //   label: "Configuración"
+    // }, 
     // {
     //   icon: LuHeartHandshake,
     //   label: "Support"
     // },
-     {
-      icon: LuLock,
-      label: "Bloquear Pantalla",
-      link: "/auth/lock-screen"
-    }, {
+    //  {
+    //   icon: LuLock,
+    //   label: "Bloquear Pantalla",
+    //   link: "/auth/lock-screen"
+    // }, 
+    {
       icon: LuLogOut,
       label: "Cerrar Sesión",
       link: "/auth/logout"

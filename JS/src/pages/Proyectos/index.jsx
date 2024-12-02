@@ -145,7 +145,6 @@ export default function Main() {
         <Grid sx={{ display: "flex", justifyContent: "center", alignItems: "center", maxHeight: "500px", p: 3 }}>
           <Card sx={{ width: "100%", borderRadius: 4, boxShadow: 5, p: 3 }}>
             <CardContent>
-
               <Tabs
                 value={tabIndex}
                 onChange={handleTabChange}
@@ -164,9 +163,18 @@ export default function Main() {
               {loading ? (
                 <Typography align="center">Cargando proyectos...</Typography>
               ) : error ? (
-                <Typography align="center" color="error">Error: {error}</Typography>
+                <Typography align="center" color="error">
+                  Error: {error}
+                </Typography>
+              ) : userProjects.length === 0 ? (
+                <Typography align="center" color="text.secondary">
+                  Aún no has creado ningún proyecto
+                </Typography>
               ) : (
-                <ProjectList projects={userProjects} onSelectProject={handleSelectProject} onDeleteProject={handleDeleteProject} // Pasar la función de eliminar
+                <ProjectList
+                  projects={userProjects}
+                  onSelectProject={handleSelectProject}
+                  onDeleteProject={handleDeleteProject}
                 />
               )}
             </CardContent>

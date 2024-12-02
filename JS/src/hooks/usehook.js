@@ -77,12 +77,17 @@ export const useProyecto = () => {
       });
   
       const data = await response.json();
+  console.log("importante..", data);
   
-      if (response.ok) {
-        setProyectos(Array.isArray(data.datos) ? data.datos : []); // Valida que sea un array
-      } else {
-        throw new Error(data.mensaje || "Error al listar proyectos por miembro");
-      }
+  if (response.ok && Array.isArray(data.datos)) {
+    // Si datos es un arreglo (incluso si está vacío), configúralo
+    setProyectos(data.datos);
+  } else if (data.Error && Array.isArray(data.datos) && data.datos.length === 0) {
+    // Si Error es true pero datos es un arreglo vacío, tratarlo como "sin proyectos"
+    setProyectos([]);
+  } else {
+    throw new Error(data.Mensaje || "Error al listar proyectos por miembro");
+  }
     } catch (err) {
       setError(err.message);
       Swal.fire("Error", err.message, "error");

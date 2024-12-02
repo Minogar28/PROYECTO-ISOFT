@@ -180,17 +180,18 @@ export default function TareasIndex() {
               </Box>
 
               {loading ? (
-                <Typography align="center">Cargando proyectos...</Typography>
-              ) : error ? (
-                <Typography align="center" color="error">
-                  Error: {error}
-                </Typography>
-              ) : (
-                <ProjectList
-                  projects={proyectos}
-                  onViewTasks={handleViewTasks} // Pasa la función de ver tareas
-                />
-              )}
+  <Typography align="center">Cargando proyectos...</Typography>
+) : proyectos.length === 0 ? ( // Verifica si no hay proyectos
+  <Typography align="center" color="text.secondary">
+    No eres colaborador de ningún proyecto.
+  </Typography>
+) : (
+  <ProjectList
+    projects={proyectos}
+    onViewTasks={handleViewTasks} // Pasa la función de ver tareas
+  />
+)}
+
             </CardContent>
           </Card>
         </Grid>
