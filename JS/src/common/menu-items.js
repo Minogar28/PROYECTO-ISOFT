@@ -55,11 +55,7 @@ const MENU_ITEMS = [
      
     ]
   },
-  {
-    key: "analisis-datos",
-    label: "Análisis de Datos",
-    isTitle: true
-  },
+ 
   {
     key: "reuniones",
     label: " Reuniones",
@@ -81,50 +77,50 @@ const MENU_ITEMS = [
     ]
   },
   
-  // {
-  //   key: "notificaciones",
-  //   label: "Notificaciones",
-  //   isTitle: true
-  // },
-  // {
-  //   key: "notificaciones",
-  //   label: "Notificaciones",
-  //   isTitle: false,
-  //   icon: LuFingerprint,
-  //   children: [
-  //     {
-  //       key: "Asignaciones",
-  //       label: "Asignaciones",
-  //       url: "/seguridad/roles",
-  //       parentKey: "notificaciones"
-  //     },
-  //   ]
-  // },  
-  // {
-  //   key: "accesibilidad",
-  //   label: "Accesibilidad",
-  //   isTitle: true
-  // },
-  // {
-  //   key: "seguridad",
-  //   label: "Seguridad",
-  //   isTitle: false,
-  //   icon: LuFingerprint,
-  //   children: [
-  //     {
-  //       key: "seguridad-roles",
-  //       label: "Roles",
-  //       url: "/seguridad/roles",
-  //       parentKey: "seguridad"
-  //     },
-  //     {
-  //       key: "seguridad-usuarios",
-  //       label: "Usuarios",
-  //       url: "/seguridad/usuarios",
-  //       parentKey: "seguridad"
-  //     }
-  //   ]
-  // },
+  {
+    key: "notificaciones",
+    label: "Notificaciones",
+    isTitle: true
+  },
+  {
+    key: "notificaciones",
+    label: "Notificaciones",
+    isTitle: false,
+    icon: LuFingerprint,
+    children: [
+      {
+        key: "Asignaciones",
+        label: "Asignaciones",
+        url: "/seguridad/roles",
+        parentKey: "notificaciones"
+      },
+    ]
+  },  
+  {
+    key: "accesibilidad",
+    label: "Accesibilidad",
+    isTitle: true
+  },
+  {
+    key: "seguridad",
+    label: "Seguridad",
+    isTitle: false,
+    icon: LuFingerprint,
+    children: [
+      {
+        key: "seguridad-roles",
+        label: "Roles",
+        url: "/seguridad/roles",
+        parentKey: "seguridad"
+      },
+      {
+        key: "seguridad-usuarios",
+        label: "Usuarios",
+        url: "/seguridad/usuarios",
+        parentKey: "seguridad"
+      }
+    ]
+  },
  
 //   {
 //   key: "navigation",

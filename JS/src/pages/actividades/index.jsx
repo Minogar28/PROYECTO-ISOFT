@@ -36,12 +36,17 @@ function ProjectList({ projects, onViewTasks }) {
             <ListItemButton
               sx={{
                 borderRadius: 2,
-                boxShadow: 1,
                 p: 2,
                 flexGrow: 1,
                 flexDirection: { xs: "column", md: "row" },
                 alignItems: { xs: "flex-start", md: "center" },
                 gap: 2,
+                
+              }} disableRipple
+              disableTouchRipple
+              onClick={(e) => {
+                e.preventDefault(); // Evitar comportamiento por defecto
+                e.stopPropagation(); // Detener propagación del evento
               }}
             >
               <Avatar sx={{ bgcolor: "primary.main", mr: 1, width: 46, height: 46 }}>
@@ -63,7 +68,7 @@ function ProjectList({ projects, onViewTasks }) {
               </Box>
               <Button
                 variant="contained"
-                color="secondary"
+                color="success"
                 onClick={() => onViewTasks(project)} // Llama la función al hacer clic
                 sx={{
                   alignSelf: { xs: "flex-start", md: "center" },
@@ -167,7 +172,6 @@ export default function TareasIndex() {
                 }}
               >
                 <Typography variant="h6" sx={{ fontWeight: "bold" }}>
-                  Proyectos
                 </Typography>
                 <Button
                   variant="contained"
@@ -175,23 +179,22 @@ export default function TareasIndex() {
                   startIcon={<Add />}
                   onClick={handleJoinProject}
                 >
-                  Unirme a un Proyecto
+                  Unirme a un proyecto
                 </Button>
               </Box>
 
               {loading ? (
-  <Typography align="center">Cargando proyectos...</Typography>
-) : proyectos.length === 0 ? ( // Verifica si no hay proyectos
-  <Typography align="center" color="text.secondary">
-    No eres colaborador de ningún proyecto.
-  </Typography>
-) : (
-  <ProjectList
-    projects={proyectos}
-    onViewTasks={handleViewTasks} // Pasa la función de ver tareas
-  />
-)}
-
+                <Typography align="center">Cargando proyectos...</Typography>
+              ) : proyectos.length === 0 ? ( // Verifica si no hay proyectos
+                <Typography align="center" color="text.secondary">
+                  No eres colaborador de ningún proyecto.
+                </Typography>
+              ) : (
+                <ProjectList
+                  projects={proyectos}
+                  onViewTasks={handleViewTasks} // Pasa la función de ver tareas
+                />
+              )}
             </CardContent>
           </Card>
         </Grid>

@@ -42,10 +42,10 @@ const TaskDescription = ({ descriptionModal, toggleDescriptionModal, tarea }) =>
     const userData = info.userData[0];
     useEffect(() => {
         if (tarea?.comentarios) {
-          setComentarios(tarea.comentarios);
+            setComentarios(tarea.comentarios);
         }
-      }, [tarea]);
-    
+    }, [tarea]);
+
     const handleEnviarComentario = async () => {
         if (!nuevoComentario.trim()) return;
 
@@ -64,7 +64,7 @@ const TaskDescription = ({ descriptionModal, toggleDescriptionModal, tarea }) =>
             const tareaActualizada = {
                 ...tarea,
                 comentarios: [...comentarios, comentario],
-                
+
             };
 
             // Llama a la API para actualizar la tarea
@@ -125,11 +125,18 @@ const TaskDescription = ({ descriptionModal, toggleDescriptionModal, tarea }) =>
                 <Box
                     sx={{
                         display: "flex",
+                        flexWrap: "wrap", // Permitir que los elementos se ajusten en pantallas pequeñas
                         justifyContent: "space-between",
                         my: "28px",
+                        gap: 2, // Espaciado entre elementos para pantallas pequeñas
                     }}
                 >
-                    <Box>
+                    <Box
+                        sx={{
+                            flex: "1 1 calc(50% - 16px)", // Toma el 50% del ancho en pantallas medianas
+                            minWidth: "150px", // Asegura que no sea demasiado pequeño
+                        }}
+                    >
                         <Typography variant="subtitle1" gutterBottom>
                             Fecha de creación
                         </Typography>
@@ -139,7 +146,13 @@ const TaskDescription = ({ descriptionModal, toggleDescriptionModal, tarea }) =>
                                 : "N/A"}
                         </Typography>
                     </Box>
-                    <Box>
+
+                    <Box
+                        sx={{
+                            flex: "1 1 calc(50% - 16px)", // Similar al anterior para dividir en dos columnas
+                            minWidth: "150px",
+                        }}
+                    >
                         <Typography variant="subtitle1" gutterBottom>
                             Fecha de finalización
                         </Typography>
@@ -149,18 +162,22 @@ const TaskDescription = ({ descriptionModal, toggleDescriptionModal, tarea }) =>
                                 : "N/A"}
                         </Typography>
                     </Box>
-                    <Box>
+
+                    <Box
+                        sx={{
+                            flex: "1 1 100%", // Ocupa el ancho completo en pantallas pequeñas
+                        }}
+                    >
                         <Typography variant="subtitle1" gutterBottom>
                             Asignados:
                         </Typography>
-                        <Box sx={{ display: "flex" }}>
+                        <Box sx={{ display: "flex", flexWrap: "wrap", gap: 1 }}>
                             {tarea?.asignados?.map((asignado, idx) => (
                                 <Tooltip title={asignado?.NombreCompleto || "Sin Nombre"} key={idx}>
                                     <Avatar
                                         sx={{
                                             height: "32px",
                                             width: "32px",
-                                            marginInlineEnd: "-12px",
                                             transition: "all 0.2s",
                                             "&:hover": {
                                                 transform: "translateY(-2px)",
@@ -174,7 +191,33 @@ const TaskDescription = ({ descriptionModal, toggleDescriptionModal, tarea }) =>
                         </Box>
                     </Box>
 
+                    <Box
+                        sx={{
+                            flex: "1 1 100%", // El campo de estado también ocupa todo el ancho
+                        }}
+                    >
+                        {console.log("I SLAYYY", tarea?.estado)
+                        }
+                        <TextField
+                            select
+                            fullWidth
+                            label="Selecciona el estado"
+                            value={tarea?.estado || ""}
+                            onChange={(e) => {
+                                const newEstado = e.target.value;
+                                tarea.estado = newEstado;
+                                // Actualiza el estado global si corresponde
+                                // setTarea((prev) => ({ ...prev, estado: newEstado }));
+                            }}
+                        >
+                            <MenuItem value="Por Hacer">Por Hacer</MenuItem>
+                            <MenuItem value="En Desarrollo">En Desarrollo</MenuItem>
+                            <MenuItem value="En Prueba">En Prueba</MenuItem>
+                            <MenuItem value="Completadas">Completadas</MenuItem>
+                        </TextField>
+                    </Box>
                 </Box>
+
 
                 {/* Tabs */}
                 <Box>
@@ -342,7 +385,7 @@ const Kanban = ({ project, onBack }) => {
         fechaFinalizacion: "",
         fechaDeCreacion: "",
         IdProyecto: project?._id || "",
-            archivosAdjuntos: [],
+        archivosAdjuntos: [],
 
     });
     const {
@@ -385,13 +428,13 @@ const Kanban = ({ project, onBack }) => {
 
     const handleFilesChange = (files) => {
         console.log("files..", files);
-        
+
         setNewTaskDetails((prevDetails) => ({
-          ...prevDetails,
-          archivosAdjuntos: files,
+            ...prevDetails,
+            archivosAdjuntos: files,
         }));
-        
-      };
+
+    };
     const handleNewTaskChange = (e) => {
         const { name, value } = e.target;
         setNewTaskDetails((prev) => ({ ...prev, [name]: value }));
@@ -417,7 +460,7 @@ const Kanban = ({ project, onBack }) => {
                 fechaFinalizacion: "",
                 fechaDeCreacion: "",
                 IdProyecto: project._id,
-                archivosAdjuntos:[]
+                archivosAdjuntos: []
             });
         } catch (error) {
             console.error("Error al agregar tarea:", error.message);
@@ -472,14 +515,14 @@ const Kanban = ({ project, onBack }) => {
                     }}
                 >
                     {sections.length === 0 ? ( // Verifica si no hay tareas agrupadas
-                    <Typography
-                        variant="h6"
-                        color="text.secondary"
-                        sx={{ margin: "auto", textAlign: "center" }}
-                    >
-                        No hay tareas asignadas aún.
-                    </Typography>
-                ) : (sections.map((section) => (
+                        <Typography
+                            variant="h6"
+                            color="text.secondary"
+                            sx={{ margin: "auto", textAlign: "center" }}
+                        >
+                            No hay tareas asignadas aún.
+                        </Typography>
+                    ) : (sections.map((section) => (
                         <Droppable droppableId={section.id} key={section.id}>
                             {(provided) => (
                                 <Box
@@ -528,12 +571,12 @@ const Kanban = ({ project, onBack }) => {
                                                 autoFocus
                                             />
                                         )}
-                                        <IconButton
+                                        {/* <IconButton
                                             onClick={() => setNewTaskModal(true)} // Abrir modal de creación
                                             sx={{ marginRight: "8px" }}
                                         >
                                             <LuPlus />
-                                        </IconButton>
+                                        </IconButton> */}
                                     </Box>
 
                                     <SimpleBarStyled>
@@ -714,7 +757,7 @@ const Kanban = ({ project, onBack }) => {
                             </Grid>
 
                             <Grid xs={12}>
-                            <FileUploadTabs onFilesChange={handleFilesChange} /> {/* Renderizamos el componente de subida de archivos aquí */}
+                                <FileUploadTabs onFilesChange={handleFilesChange} /> {/* Renderizamos el componente de subida de archivos aquí */}
                             </Grid>
                         </Grid>
                         <Box

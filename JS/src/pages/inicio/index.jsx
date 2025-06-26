@@ -111,11 +111,7 @@ const Inicio = () => {
                   0 tareas finalizadas
                 </Button>
               </motion.div>
-              <motion.div whileHover={hoverEffect.hover}>
-                <Button variant="outlined" startIcon={<Person />} color="inherit">
-                  0 colaboradores
-                </Button>
-              </motion.div>
+              
             </Box>
           </motion.div>
         </Box>

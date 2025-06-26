@@ -1,6 +1,7 @@
 // index.js
 const path = require('path');
-require('dotenv').config(); // Carga las variables de entorno desde el archivo .env
+require('dotenv').config();
+// Carga las variables de entorno desde el archivo .env
 
 const NODE_ENV = process.env.NODE_ENV || 'development';
 const PORT = process.env.PORT || 5000;

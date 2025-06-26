@@ -215,6 +215,47 @@ const useProyecto = () => {
     }
   };
 
+// Función para eliminar una tarea
+const eliminarTarea = async (tareaData) => {
+  try {
+    const response = await fetch(`${gsUrlApi}/tareas/eliminar`, {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${Token}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(tareaData), // Enviando el objeto de tarea para eliminar
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(data.Mensaje || "Error al eliminar la tarea");
+    }
+
+    // Eliminar localmente la tarea eliminada
+    setTareas((prev) => prev.filter((tarea) => tarea._id !== tareaData._id));
+
+    // Mostrar notificación con SweetAlert
+    Swal.fire({
+      icon: "success",
+      title: "Tarea eliminada",
+      text: `La tarea "${tareaData.nombreTarea}" ha sido eliminada correctamente.`,
+      confirmButtonText: "OK",
+    });
+
+    return data.datos; // Retornar los datos eliminados si es necesario
+  } catch (err) {
+    setError(err.message);
+    Swal.fire({
+      icon: "error",
+      title: "Error al eliminar tarea",
+      text: err.message,
+      confirmButtonText: "OK",
+    });
+    throw err; // Lanzar el error para manejarlo en el componente
+  }
+};
 
   return {
     proyectos,
@@ -228,6 +269,7 @@ const useProyecto = () => {
     listarTareas,
     consultarUsuario,
     actualizarProyecto,
+    eliminarTarea
   };
 };
 export default useProyecto;

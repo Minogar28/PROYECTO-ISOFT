@@ -24,6 +24,9 @@ const Informes = ({ project, tasks }) => {
   const totalTareas = tasks.length;
   const tareasCompletadas = tasks.filter((task) => task.estado === "Completadas").length;
   const tareasPendientes = totalTareas - tareasCompletadas;
+  const tareasPorHacer = tasks.filter((task) => task.estado === "Por Hacer").length;
+  const tareasEnPrueba = tasks.filter((task) => task.estado === "En Prueba").length;
+  const tareasEnDesarrollo = tasks.filter((task) => task.estado === "En Desarrollo").length;
 
   const estadoProyecto =
     totalTareas > 0 ? (tareasCompletadas / totalTareas) * 100 : 0;
@@ -58,8 +61,20 @@ const Informes = ({ project, tasks }) => {
         data: [tareasCompletadas],
       },
       {
-        name: "Por Hacer",
+        name: "Pendientes",
         data: [tareasPendientes],
+      },
+      {
+        name: "Por Hacer",
+        data: [tareasPorHacer],
+      },
+      {
+        name: "En Prueba",
+        data: [tareasEnPrueba],
+      },
+      {
+        name: "En Desarrollo",
+        data: [tareasEnDesarrollo],
       },
     ],
     xaxis: {
@@ -68,7 +83,7 @@ const Informes = ({ project, tasks }) => {
     yaxis: {
       title: { text: "Cantidad de Tareas" },
     },
-    colors: ["#4caf50", "#f44336"], // Colores para completadas y pendientes
+    colors: ["#4caf50", "#f44336", "#ff9800", "#2196f3"], // Colores para cada estado
     title: { text: "Estado de Tareas", align: "center" },
   };
 

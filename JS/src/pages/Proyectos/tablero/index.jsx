@@ -173,9 +173,32 @@ const TaskDescription = ({ descriptionModal, toggleDescriptionModal, tarea }) =>
                             ))}
                         </Box>
                     </Box>
-
+                    
                 </Box>
-
+                <Box
+                        sx={{
+                            flex: "1 1 100%", // El campo de estado también ocupa todo el ancho
+                        }}
+                    >
+                        
+                        <TextField
+                            select
+                            fullWidth
+                            label="Selecciona el estado"
+                            value={tarea?.estado || ""}
+                            onChange={(e) => {
+                                const newEstado = e.target.value;
+                                tarea.estado = newEstado;
+                                // Actualiza el estado global si corresponde
+                                // setTarea((prev) => ({ ...prev, estado: newEstado }));
+                            }}
+                        >
+                            <MenuItem value="Por Hacer">Por Hacer</MenuItem>
+                            <MenuItem value="En Desarrollo">En Desarrollo</MenuItem>
+                            <MenuItem value="En Prueba">En Prueba</MenuItem>
+                            <MenuItem value="Completadas">Completadas</MenuItem>
+                        </TextField>
+                    </Box>
                 {/* Tabs */}
                 <Box>
                     <Tabs

@@ -85,7 +85,7 @@ const repo = {
   eliminar: async (tareaData) => {
     try {
       const filtro = { _id: tareaData._id };
-      const response = await tareasModel.findOneAndRemove(filtro);
+      const response = await tareasModel.findOneAndDelete(filtro);
       const status = response ? constants.SUCCEEDED_MESSAGE : constants.NOT_FOUND_ERROR_MESSAGE;
       const mensaje = response ? "Tarea eliminada correctamente" : "Tarea no encontrada";
       return { status, mensaje, datos: response ? [response] : [] };

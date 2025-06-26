@@ -20,8 +20,9 @@ import {
 import { LuX } from "react-icons/lu";
 import useProyecto from "@src/hooks/useProyecto.js";
 import { ExpandMore, Delete, Add } from "@mui/icons-material";
-
+import Swal from "sweetalert2";
 import { Assignment, PriorityHigh, CalendarToday, People } from "@mui/icons-material";
+import Dropzone from "react-dropzone";
 
 function Tareas({ colaboradores, IdProyecto }) {
   const [newTask, setNewTask] = useState({
@@ -33,12 +34,15 @@ function Tareas({ colaboradores, IdProyecto }) {
     estado: "",
   });
   const [openModal, setOpenModal] = useState(false);
-
-  const { tareas, listarTareas, agregarTarea, actualizarTarea } = useProyecto();
+  const info = JSON.parse(localStorage.getItem('userSession'));
+  const userData = info.userData[0];
+  const [attachments, setAttachments] = useState([]);
+  const Token = info.token
+  const { tareas, listarTareas, agregarTarea, actualizarTarea, eliminarTarea } = useProyecto();
 
   useEffect(() => {
     listarTareas();
-  }, [listarTareas]);
+  }, [Token]);
 
   const filteredTasks = tareas.filter((task) => task.IdProyecto === IdProyecto);
   // const handleRemoveAsignado = async (taskId, asignadoId) => {
@@ -54,6 +58,21 @@ function Tareas({ colaboradores, IdProyecto }) {
   //     console.error("Error al eliminar asignado:", error);
   //   }
   // };
+  const handleDrop = (acceptedFiles) => {
+    setAttachments([...attachments, ...acceptedFiles]);
+  };
+  const handleDeleteTask = async (task) => {
+    try {
+      await eliminarTarea(task);
+      listarTareas();
+    } catch (error) {
+      Swal.fire({
+        icon: "error",
+        title: "Error",
+        text: "No se pudo eliminar la tarea. Por favor, intenta nuevamente.",
+      });
+    }
+  };
 
   const handleAddTask = async (e) => {
     e.preventDefault();
@@ -176,6 +195,7 @@ function Tareas({ colaboradores, IdProyecto }) {
                     <Assignment fontSize="small" />
                     {task.nombreTarea}
                   </Typography>
+
                   <Box
                     sx={{
                       display: "flex",
@@ -209,6 +229,13 @@ function Tareas({ colaboradores, IdProyecto }) {
                       }
                       size="small"
                     />
+                    <IconButton
+                      aria-label="delete"
+                      onClick={() => handleDeleteTask(task)}
+                      color="error"
+                    >
+                      <Delete />
+                    </IconButton>
                   </Box>
                 </Stack>
               </AccordionSummary>
@@ -363,7 +390,39 @@ function Tareas({ colaboradores, IdProyecto }) {
                   <MenuItem value="Completadas">Completadas</MenuItem>
                 </TextField>
               </Grid>
+              
+              
+              <Grid item xs={12}>
+                <Dropzone onDrop={handleDrop}>
+                  {({ getRootProps, getInputProps }) => (
+                    <Box
+                      {...getRootProps()}
+                      sx={{
+                        border: "2px dashed #ccc",
+                        borderRadius: "8px",
+                        p: 3,
+                        textAlign: "center",
+                        cursor: "pointer",
+                      }}
+                    >
+                      <input {...getInputProps()} />
+                      <Typography variant="body2" color="textSecondary">
+                        Arrastra y suelta tus archivos aquí, o haz clic para seleccionar
+                      </Typography>
+                    </Box>
+                  )}
+                </Dropzone>
+                {/* Mostrar archivos seleccionados */}
+                <Box sx={{ mt: 2 }}>
+                  {attachments.map((file, index) => (
+                    <Typography key={index} variant="body2">
+                      {file.name}
+                    </Typography>
+                  ))}
+                </Box>
+              </Grid>
             </Grid>
+
             <Box
               sx={{
                 display: "flex",
