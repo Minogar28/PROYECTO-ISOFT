@@ -1,112 +1,108 @@
-# PROYECTO-ISOFT
-Descripción del Proyecto
-Desarrollo de un proyecto llamado "Herramientas gestora de proyectos informáticos". Este sistema tiene como objetivo ofrecer una plataforma completa para la gestión eficiente de proyectos tecnológicos. La herramienta incluye módulos para tareas, reportes, análisis de datos, y administración general tanto para desarrolladores como para lideres de proyecto.
+# CELERIUM - Gestor de Proyectos Informáticos
 
-Requisitos del Proyecto
+## 🎯 Descripción
 
-Backend:
+**ProManager** es una herramienta moderna y completa para la gestión integral de proyectos informáticos. Diseñada para facilitar la organización, seguimiento y colaboración en desarrollo de software, permitiendo a los equipos trabajar de manera más eficiente y coordinada.
 
-El backend del proyecto está desarrollado en Node.js, utilizando Express como framework principal. A continuación se listan las dependencias necesarias:
+## ✨ Características Principales
 
-Dependencias
+- 📋 **Gestión de Proyectos**: Crea y organiza tus proyectos fácilmente
+- 👥 **Colaboración en Equipo**: Trabaja conjuntamente con tu equipo
+- 📅 **Planificación**: Cronogramas y milestones para mantener el control
+- 📊 **Seguimiento de Tareas**: Monitorea el progreso en tiempo real
+- 🎨 **Interfaz Intuitiva**: Diseño moderno y fácil de usar
+- 📱 **Responsive Design**: Funciona en cualquier dispositivo
 
-cors: Manejo de cabeceras y seguridad entre dominios.
+## 🚀 Tecnologías Utilizadas
 
-express: Framework para la creación de servidores.
+- **Frontend**: JavaScript (99.4%)
+- **Backend**: Node.js/Express
+- **Diseño**: Mockups incluidos en la carpeta `/Mockups`
 
-joi: Validación de datos.
+## 📁 Estructura del Proyecto
 
-jsonwebtoken: Manejo de autenticación mediante tokens.
+```
+PROYECTO-ISOFT/
+├── BACKEND/          # Lógica del servidor
+├── JS/               # Código JavaScript del frontend
+├── Mockups/          # Diseños y prototipos
+├── README.md         # Este archivo
+└── favicon.ico       # Icono del sitio
+```
 
-mongoose: Conexión y manejo de bases de datos MongoDB.
+## 🛠️ Instalación
 
-newrelic: Monitorización de rendimiento.
+### Prerrequisitos
+- Node.js (v14 o superior)
+- npm o yarn
 
-nodemailer: Envio de correos electrónicos.
+### Pasos
 
-request: Realizar solicitudes HTTP.
+1. **Clona el repositorio**
+   ```bash
+   git clone https://github.com/Minogar28/ProManager.git
+   cd ProManager
+   ```
 
-uuid: Generación de identificadores únicos.
+2. **Instala las dependencias**
+   ```bash
+   npm install
+   ```
 
-Instalación de Dependencias
+3. **Inicia el servidor**
+   ```bash
+   npm start
+   ```
 
-Ejecuta el siguiente comando en la carpeta del backend: npm install
+4. **Accede a la aplicación**
+   ```
+   http://localhost:3000
+   ```
 
-Frontend:
+## 📖 Uso
 
-El frontend está desarrollado con React y utiliza Vite como herramienta de desarrollo. Incluye librerías avanzadas para la creación de interfaces interactivas y componentes responsivos.
+### Crear un Nuevo Proyecto
+1. Haz clic en "Nuevo Proyecto"
+2. Ingresa el nombre y descripción
+3. Añade miembros del equipo
+4. ¡Comienza a colaborar!
 
-Dependencias Principales
+### Gestionar Tareas
+- Asigna tareas a miembros del equipo
+- Establece prioridades y fechas límite
+- Monitorea el progreso en tiempo real
 
-@mui/material: Componentes de interfaz basados en Material Design.
+## 🤝 Contribuir
 
-@mui/icons-material: Íconos listos para usar.
+Las contribuciones son bienvenidas. Para colaborar:
 
-axios: Manejo de solicitudes HTTP.
+1. Fork el repositorio
+2. Crea una rama para tu feature (`git checkout -b feature/AmazingFeature`)
+3. Commit tus cambios (`git commit -m 'Add some AmazingFeature'`)
+4. Push a la rama (`git push origin feature/AmazingFeature`)
+5. Abre un Pull Request
 
-react-router-dom: Manejo de rutas en React.
+## 📝 Licencia
 
-react-hook-form: Manejo de formularios en React.
+Este proyecto está bajo licencia MIT. Ver el archivo `LICENSE` para más detalles.
 
-yup: Validación de formularios.
+## 👨‍💻 Autor
 
-apexcharts y react-apexcharts: Gráficas avanzadas.
+**Minogar28**
+- GitHub: [@Minogar28](https://github.com/Minogar28)
 
-simplebar-react: Scrollbars personalizadas.
+## 📞 Soporte
 
-swiper: Carruseles y sliders interactivos.
 
-DevDependencies (Dependencias de Desarrollo)
+## 🗺️ Roadmap
 
-vite: Herramienta de desarrollo rápida.
+- [ ] Exportación de reportes (PDF, Excel)
+- [ ] Integración con Git/GitHub
+- [ ] Sistema de notificaciones
+- [ ] Estadísticas y análisis avanzados
+- [ ] Aplicación móvil nativa
+- [ ] API REST pública
 
-typescript: Tipado estático para JavaScript.
+---
 
-eslint y prettier: Análisis estático y formateo de código.
-
-Instalación de Dependencias
-
-Ejecuta el siguiente comando en la carpeta del frontend: yarn install (o si usas npm npm install)
-
-Estructura del Proyecto
-
-Backend:
-
-src/controllers: Controladores para manejar la lógica de negocio.
-
-src/models: Modelos de datos (MongoDB).
-
-src/routes: Definición de rutas.
-
-src/helpers: Funciones reutilizables.
-
-src/middlewares: Middleware de validación y seguridad.
-
-Frontend:
-
-src/components: Componentes reutilizables.
-
-src/pages: Páginas principales.
-
-src/routes: Configuración de rutas.
-
-src/hooks: Hooks personalizados.
-
-src/theme: Estilos y configuración de tema.
-
-src/utils: Utilidades generales.
-
-Ejecución del Proyecto
-
-Backend:
-
-Asegúrate de que MongoDB esté corriendo en tu sistema.
-
-Configura las variables de entorno en el archivo .env ubicado en la carpeta del backend.
-
-Inicia el servidor ejecutando el siguiente comando en la terminal: node src/app.js
-Frontend:
-
-Configura las variables de entorno en el archivo .env ubicado en la carpeta del frontend.
-
-Inicia el servidor de desarrollo ejecutando el siguiente comando: npm run dev (o si usas yarn, yarn dev)
+**Última actualización**: Abril 2026
